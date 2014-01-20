@@ -13,12 +13,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.jackson.Response;
 import com.example.model.User;
+import com.example.util.PasswordUtil;
 
 @Service
 public class UserServiceImpl implements UserService {
 
 	@PersistenceContext
-    EntityManager em;
+	EntityManager em;
 
 	@Transactional
 	@Override
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
 			// 登録
 			User user = new User();
 			user.setUsername(username);
-	    	user.setPassword(password);
+			user.setPassword(PasswordUtil.getPasswordHash(username, password));
 			em.persist(user);
 			// TODO: 正しいサクセスコードを設定のこと
 			res.setStatusCode(0);
@@ -68,23 +69,24 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public Response getUsers() {
 		CriteriaQuery<User> c = em.getCriteriaBuilder().createQuery(User.class);
-        c.from(User.class);
-        Response res = new Response();
-        List<com.example.jackson.User> users = new ArrayList<com.example.jackson.User>();
-        for (User user : em.createQuery(c).getResultList()) {
-        	com.example.jackson.User userJson = new com.example.jackson.User();
-        	userJson.setLat(123.123);
-        	userJson.setLng(456.456);
-        	userJson.setName(user.getUsername());
-        	users.add(userJson);
-        }
-        res.addObjects("users", users);
-        // TODO: 正しいサクセスコード指定のこと
-        res.setStatusCode(0);
-        return res;
+		c.from(User.class);
+		Response res = new Response();
+		List<com.example.jackson.User> users = new ArrayList<com.example.jackson.User>();
+		for (User user : em.createQuery(c).getResultList()) {
+			com.example.jackson.User userJson = new com.example.jackson.User();
+			userJson.setLat(123.123);
+			userJson.setLng(456.456);
+			userJson.setName(user.getUsername());
+			users.add(userJson);
+		}
+		res.addObjects("users", users);
+		// TODO: 正しいサクセスコード指定のこと
+		res.setStatusCode(0);
+		return res;
 	}
 
 	private boolean isValid(String username, String password) {
+		// TODO: 不正文字列チェック(SQL Injection, etc...)
 		return false;
 	}
 }
