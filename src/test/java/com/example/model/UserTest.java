@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.example.jackson;
+package com.example.model;
 
 import java.io.IOException;
 
@@ -25,12 +25,12 @@ public class UserTest extends AbstractTest {
 		Double lat = 45.1235, lng = 41.345;
 
 		User user = new User();
-		user.setName(name);
+		user.setUsername(name);
 		user.setLng(lng);
 		user.setLat(lat);
 
 		String json = mapper.writeValueAsString(user);
-		StringBuilder builder = new StringBuilder("{\"name\":\"");
+		StringBuilder builder = new StringBuilder("{\"username\":\"");
 		builder.append(name);
 		builder.append("\",\"lat\":");
 		builder.append(lat);

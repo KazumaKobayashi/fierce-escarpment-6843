@@ -5,6 +5,8 @@ package com.example.jackson;
 
 import java.util.Map;
 
+import com.example.model.User;
+
 /**
  * @author Kazuki Hasegawa
  */

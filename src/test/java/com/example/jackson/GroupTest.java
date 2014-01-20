@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.example.AbstractTest;
+import com.example.model.User;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -27,7 +28,7 @@ public class GroupTest extends AbstractTest {
 
 		StringBuilder builder = new StringBuilder("{\"name\":\"");
 		builder.append(name);
-		builder.append("\",\"users\":{\"kazuma01\":{\"name\":\"Kazuma\",\"lat\":45.1235,\"lng\":41.345}}}");
+		builder.append("\",\"users\":{\"kazuma01\":{\"username\":\"Kazuma\",\"lat\":45.1235,\"lng\":41.345}}}");
 		assertThat(json, is(builder.toString()));
 		System.out.println(mapper.writeValueAsString(users));
 	}
@@ -36,7 +37,7 @@ public class GroupTest extends AbstractTest {
 		String name = "Kazuma";
 		Double lat = 45.1235, lng = 41.345;
 		User user = new User();
-		user.setName(name);
+		user.setUsername(name);
 		user.setLng(lng);
 		user.setLat(lat);
 		return user;

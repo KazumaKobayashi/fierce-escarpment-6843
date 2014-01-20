@@ -52,12 +52,11 @@ public class UserServiceImpl implements UserService {
 		Response res = new Response();
 		if (users.size() > 0) {
 			// 先頭を取り出す
+			User user = users.get(0);
+			user.setLat(123.123);
+			user.setLng(456.456);
+			res.addObjects("user", user);
 			res.setStatusCode(0);
-			com.example.jackson.User userJson = new com.example.jackson.User();
-			userJson.setLat(123.123);
-			userJson.setLng(456.456);
-			userJson.setName(users.get(0).getUsername());
-			res.addObjects("user", userJson);
 		} else {
 			// それ以外は知らない
 			res.setStatusCode(-1);
@@ -71,15 +70,7 @@ public class UserServiceImpl implements UserService {
 		CriteriaQuery<User> c = em.getCriteriaBuilder().createQuery(User.class);
 		c.from(User.class);
 		Response res = new Response();
-		List<com.example.jackson.User> users = new ArrayList<com.example.jackson.User>();
-		for (User user : em.createQuery(c).getResultList()) {
-			com.example.jackson.User userJson = new com.example.jackson.User();
-			userJson.setLat(123.123);
-			userJson.setLng(456.456);
-			userJson.setName(user.getUsername());
-			users.add(userJson);
-		}
-		res.addObjects("users", users);
+		res.addObjects("users", em.createQuery(c).getResultList());
 		// TODO: 正しいサクセスコード指定のこと
 		res.setStatusCode(0);
 		return res;
