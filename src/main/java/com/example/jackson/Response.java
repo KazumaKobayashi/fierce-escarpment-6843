@@ -19,6 +19,10 @@ public class Response {
 		objects.put("code", statusCode);
 	}
 
+	public Integer getStatusCode() {
+		return (Integer) objects.get("code");
+	}
+
 	public void addObjects(String key, Object object) {
 		objects.put(key, object);
 	}
