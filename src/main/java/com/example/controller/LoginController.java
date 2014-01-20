@@ -22,7 +22,7 @@ public class LoginController {
 	 * @param password
 	 * @return
 	 */
-    @RequestMapping(value = "/login")
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ResponseBody
     public String login(
     		@RequestParam("name") String username,
