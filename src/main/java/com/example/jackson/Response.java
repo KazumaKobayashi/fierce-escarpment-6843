@@ -23,7 +23,7 @@ public class Response {
 		objects.put(key, object);
 	}
 
-	public String convert() {
+	public String getResponseJson() {
 		try {
 			return mapper.writeValueAsString(objects);
 		} catch (IOException e) {
