@@ -14,6 +14,13 @@ public class RegisterController {
 	@Autowired
 	private UserService userService;
 
+	/**
+	 * ユーザの登録をする
+	 *
+	 * @param username
+	 * @param password
+	 * @return
+	 */
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	@ResponseBody
 	public String register(

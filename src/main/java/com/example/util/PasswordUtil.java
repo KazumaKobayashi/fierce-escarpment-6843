@@ -1,6 +1,5 @@
 package com.example.util;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -41,11 +40,12 @@ public final class PasswordUtil {
 			MessageDigest md = MessageDigest.getInstance(ALGORITHM);
 			md.update(target.getBytes());
 			byte[] digest = md.digest();
-			hash = new String(digest, "UTF-8");
- 
+			StringBuilder builder = new StringBuilder();
+			for (byte b : digest) {
+				builder.append(Integer.toHexString(b & 0xff));
+			}
+			hash = builder.toString();
 		} catch (NoSuchAlgorithmException e) {
-			//LOG.error(e.getLocalizedMessage(), e);
-		} catch (UnsupportedEncodingException e) {
 			//LOG.error(e.getLocalizedMessage(), e);
 		}
 		return hash;
