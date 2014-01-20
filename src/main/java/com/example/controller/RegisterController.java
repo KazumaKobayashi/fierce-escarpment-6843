@@ -14,13 +14,13 @@ public class RegisterController {
 	@Autowired
 	private UserService userService;
 
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    @ResponseBody
-    public String register(
-    		@RequestParam("name") String username,
-    		@RequestParam("passwd") String password) {
+	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	@ResponseBody
+	public String register(
+			@RequestParam("name") String username,
+			@RequestParam("passwd") String password) {
 
-        return userService.regist(username, password).getResponseJson();
-    }
+		return userService.regist(username, password).getResponseJson();
+	}
 }
 //外部からの受付　
