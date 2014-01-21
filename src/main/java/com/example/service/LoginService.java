@@ -1,6 +1,8 @@
 package com.example.service;
 
-import com.example.jackson.Response;
+import com.example.exception.InvalidPasswordException;
+import com.example.exception.NotFoundUserException;
+import com.example.model.LoginToken;
 
 /**
  * ログイン関係のサービス
@@ -17,5 +19,5 @@ public interface LoginService {
 	 * @param password ユーザパスワード
 	 * @return
 	 */
-	public Response doLogin(String userId, String password);
+	public LoginToken doLogin(String userId, String password) throws NotFoundUserException, InvalidPasswordException;
 }

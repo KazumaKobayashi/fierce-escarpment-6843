@@ -12,7 +12,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.jackson.Response;
+import com.example.exception.InvalidPasswordException;
+import com.example.exception.NotFoundUserException;
 import com.example.model.LoginToken;
 import com.example.model.User;
 import com.example.util.DateUtil;
@@ -33,11 +34,10 @@ public class LoginServiceImpl implements LoginService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public Response doLogin(String userId, String password) {
+	public LoginToken doLogin(String userId, String password) throws NotFoundUserException, InvalidPasswordException {
 		Query query = em.createQuery("select u from User u where u.id = :id");
 		query.setParameter("id", userId);
 		List<User> users = query.getResultList();
-		Response res = new Response();
 		if (users.size() > 0) {
 			// 先頭を取り出す
 			User user = users.get(0);
@@ -53,15 +53,12 @@ public class LoginServiceImpl implements LoginService {
 				token.setUpdatedAt(now);
 				em.persist(token);
 
-				res.addObjects("token", token.getToken());
-				res.setStatusCode(0);
+				return token;
 			} else {
-				res.setStatusCode(-1);
+				throw new InvalidPasswordException("Invalid password. Id:" + userId);
 			}
 		} else {
-			// それ以外は知らない
-			res.setStatusCode(-1);
+			throw new NotFoundUserException("Not found user. Id: " + userId);
 		}
-		return res;
 	}
 }

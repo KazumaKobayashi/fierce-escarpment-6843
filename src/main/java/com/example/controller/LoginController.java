@@ -7,6 +7,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.exception.InvalidPasswordException;
+import com.example.exception.NotFoundUserException;
+import com.example.jackson.Response;
+import com.example.model.LoginToken;
 import com.example.service.LoginService;
 
 @Controller
@@ -22,11 +26,24 @@ public class LoginController {
 	 * @param password パスワード
 	 * @return
 	 */
-    @RequestMapping(value="/login", method=RequestMethod.POST)
-    @ResponseBody
-    public String login(
-    		@RequestParam("id") String userId,
+	@RequestMapping(value="/login", method=RequestMethod.POST)
+	@ResponseBody
+	public String login(
+			@RequestParam("id") String userId,
 			@RequestParam("passwd") String password){
-    	return loginService.doLogin(userId, password).getResponseJson();
-    }
+		Response res = new Response();
+		try {
+			LoginToken token = loginService.doLogin(userId, password);
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+			res.addObjects("token", token.getToken());
+		} catch (NotFoundUserException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+		} catch (InvalidPasswordException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+		}
+		return res.getResponseJson();
+	}
 }
