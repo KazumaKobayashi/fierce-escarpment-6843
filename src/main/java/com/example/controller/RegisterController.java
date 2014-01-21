@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.service.UserService;
 
+/**
+ * 登録用のコントローラ
+ *
+ * @author Kazuki Hasegawa
+ */
 @Controller
 public class RegisterController {
 	@Autowired
@@ -17,17 +22,16 @@ public class RegisterController {
 	/**
 	 * ユーザの登録をする
 	 *
-	 * @param username
-	 * @param password
+	 * @param userId ユーザId
+	 * @param password ユーザパスワード
 	 * @return
 	 */
-	@RequestMapping(value = "/register", method = RequestMethod.POST)
+	@RequestMapping(value="/register", method=RequestMethod.POST)
 	@ResponseBody
 	public String register(
-			@RequestParam("name") String username,
+			@RequestParam("id") String userId,
 			@RequestParam("passwd") String password) {
 
-		return userService.regist(username, password).getResponseJson();
+		return userService.doRegist(userId, password).getResponseJson();
 	}
 }
-//外部からの受付　

@@ -18,6 +18,12 @@ import com.example.model.User;
 import com.example.util.DateUtil;
 import com.example.util.PasswordUtil;
 
+/**
+ * LoginServiceの実装クラス
+ *
+ * @author Kazuki Hasegawa
+ * @see com.example.service.LoginService
+ */
 @Service
 public class LoginServiceImpl implements LoginService {
 
@@ -27,24 +33,24 @@ public class LoginServiceImpl implements LoginService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public Response doLogin(String username, String password) {
-		Query query = em.createQuery("select u from User u where u.username = :username");
-		query.setParameter("username", username);
+	public Response doLogin(String userId, String password) {
+		Query query = em.createQuery("select u from User u where u.id = :id");
+		query.setParameter("id", userId);
 		List<User> users = query.getResultList();
 		Response res = new Response();
 		if (users.size() > 0) {
 			// 先頭を取り出す
 			User user = users.get(0);
-			if (StringUtils.equals(PasswordUtil.getPasswordHash(username, password), user.getPassword())) {
+			if (StringUtils.equals(PasswordUtil.getPasswordHash(userId, password), user.getPassword())) {
 				// 現在時刻のタイムスタンプを取得
 				Timestamp now = DateUtil.getCurrentTimestamp();
+
+				// ログイントークンの作成
 				LoginToken token = new LoginToken();
 				token.setUserId(user.getId());
 				token.setToken(RandomStringUtils.randomAlphanumeric(10));
 				token.setCreatedAt(now);
 				token.setUpdatedAt(now);
-
-				// トークンの保存
 				em.persist(token);
 
 				res.addObjects("token", token.getToken());

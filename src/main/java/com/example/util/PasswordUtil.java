@@ -3,6 +3,11 @@ package com.example.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * パスワード関係のUtilクラス
+ *
+ * @author Kazuki Hasegawa
+ */
 public final class PasswordUtil {
 	private PasswordUtil() {}
 

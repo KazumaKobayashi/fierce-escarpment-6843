@@ -1,6 +1,6 @@
 package com.example.service;
 
-import java.util.ArrayList;
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -13,8 +13,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.jackson.Response;
 import com.example.model.User;
+import com.example.util.DateUtil;
 import com.example.util.PasswordUtil;
 
+/**
+ * UserServiceの実装クラス
+ *
+ * @author Kazuki Hasegawa
+ * @see com.example.service.UserService
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -23,18 +30,24 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public Response regist(String username, String password) {
+	public Response doRegist(String userId, String password) {
 		Response res = new Response();
-		if (isValid(username, password)
+		if (isValid(userId, password)
 				// TODO: 正しいエラーコード設定のこと
-				|| getUser(username).getStatusCode() != -1) {
+				|| getUser(userId).getStatusCode() != -1) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		} else {
-			// 登録
+			// 現在時刻のタイムスタンプを取得
+			Timestamp now = DateUtil.getCurrentTimestamp();
+
+			// ユーザ登録
 			User user = new User();
-			user.setUsername(username);
-			user.setPassword(PasswordUtil.getPasswordHash(username, password));
+			user.setId(userId);
+			user.setUsername(userId);
+			user.setPassword(PasswordUtil.getPasswordHash(userId, password));
+			user.setCreatedAt(now);
+			user.setUpdatedAt(now);
 			em.persist(user);
 			// TODO: 正しいサクセスコードを設定のこと
 			res.setStatusCode(0);
@@ -45,9 +58,9 @@ public class UserServiceImpl implements UserService {
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public Response getUser(String username) {
-		Query query = em.createQuery("select u from User u where u.username = :username");
-		query.setParameter("username", username);
+	public Response getUser(String userId) {
+		Query query = em.createQuery("select u from User u where u.id = :id");
+		query.setParameter("id", userId);
 		List<User> users = query.getResultList();
 		Response res = new Response();
 		if (users.size() > 0) {
@@ -56,9 +69,11 @@ public class UserServiceImpl implements UserService {
 			user.setLat(123.123);
 			user.setLng(456.456);
 			res.addObjects("user", user);
+			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 		} else {
 			// それ以外は知らない
+			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		}
 		return res;
@@ -76,7 +91,7 @@ public class UserServiceImpl implements UserService {
 		return res;
 	}
 
-	private boolean isValid(String username, String password) {
+	private boolean isValid(String userId, String password) {
 		// TODO: 不正文字列チェック(SQL Injection, etc...)
 		return false;
 	}

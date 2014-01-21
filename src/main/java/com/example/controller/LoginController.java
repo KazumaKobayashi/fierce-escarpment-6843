@@ -18,16 +18,15 @@ public class LoginController {
 	 * ユーザ認証を行う
 	 * 成功すればaccessTokenを返す
 	 *
-	 * @param username
-	 * @param password
+	 * @param userId ユーザId
+	 * @param password パスワード
 	 * @return
 	 */
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @RequestMapping(value="/login", method=RequestMethod.POST)
     @ResponseBody
     public String login(
-    		@RequestParam("name") String username,
+    		@RequestParam("id") String userId,
 			@RequestParam("passwd") String password){
-    	return loginService.doLogin(username, password).getResponseJson();
+    	return loginService.doLogin(userId, password).getResponseJson();
     }
 }
-//外部からの受付　
