@@ -1,5 +1,6 @@
 package com.example.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.jackson.Response;
+import com.example.model.LoginToken;
 import com.example.model.User;
+import com.example.util.DateUtil;
 import com.example.util.PasswordUtil;
 
 @Service
@@ -33,7 +36,18 @@ public class LoginServiceImpl implements LoginService {
 			// 先頭を取り出す
 			User user = users.get(0);
 			if (StringUtils.equals(PasswordUtil.getPasswordHash(username, password), user.getPassword())) {
-				res.addObjects("token", RandomStringUtils.randomAlphanumeric(10));
+				// 現在時刻のタイムスタンプを取得
+				Timestamp now = DateUtil.getCurrentTimestamp();
+				LoginToken token = new LoginToken();
+				token.setUserId(user.getId());
+				token.setToken(RandomStringUtils.randomAlphanumeric(10));
+				token.setCreatedAt(now);
+				token.setUpdatedAt(now);
+
+				// トークンの保存
+				em.persist(token);
+
+				res.addObjects("token", token.getToken());
 				res.setStatusCode(0);
 			} else {
 				res.setStatusCode(-1);
