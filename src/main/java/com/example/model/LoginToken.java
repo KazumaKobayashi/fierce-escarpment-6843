@@ -26,7 +26,7 @@ public class LoginToken implements Serializable {
 	@Column(name="user_id", nullable=false)
 	private String userId;
 
-	@Column(name="login_token", nullable=false)
+	@Column(name="login_token", nullable=false, unique=true)
 	private String token;
 
 	@Column(name="created_at", nullable=false)
