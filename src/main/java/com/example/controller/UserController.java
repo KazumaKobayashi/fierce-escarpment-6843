@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
 import com.example.model.User;
@@ -88,8 +89,19 @@ public class UserController {
 			@PathVariable("id") String userId,
 			@RequestParam("current_password") String currentPassword,
 			@RequestParam("new_password") String newPassword) {
-		// TODO: パスワード更新処理
-		return null;
+		Response res = new Response();
+		try {
+			userService.changePassword(userId, currentPassword, newPassword);
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+		} catch (UserNotFoundException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+		} catch (InvalidPasswordException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+		}
+		return res.getResponseJson();
 	}
 
 	/**
