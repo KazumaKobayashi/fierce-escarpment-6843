@@ -1,8 +1,8 @@
 package com.example.service;
 
+import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserExistsException;
 import com.example.exception.UserNotFoundException;
-import com.example.jackson.Response;
 import com.example.model.User;
 
 /**
@@ -42,9 +42,14 @@ public interface UserService {
 	public User getUser(String userId);
 
 	/**
-	 * ユーザ一覧を取得する
+	 * ユーザのパスワードを変更する
 	 *
+	 * @param userId
+	 * @param currentPassword
+	 * @param newPassword
 	 * @return
+	 * @throws UserNotFoundException
 	 */
-	public Response getUsers();
+	public User changePassword(String userId, String currentPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException;
+
 }
