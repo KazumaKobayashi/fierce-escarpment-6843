@@ -1,25 +1,50 @@
 package com.example.model;
 
+import java.io.Serializable;
+import java.sql.Timestamp;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+@Table(name="user")
 @Entity
-public class User {
+public class User implements Serializable {
+	/**
+	 * Default serializable Id
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue
 	@JsonIgnore
-	private Integer id;
+	@Column(name="user_id")
+	private String id;
+
+	@Column(name="username", nullable=false)
 	private String username;
+
+	@Column(name="password", nullable=false)
 	@JsonIgnore
 	private String password;
+
 	private Double lat;
+
 	private Double lng;
 
-	public void setId(Integer id) {
+	@JsonIgnore
+	@Column(name="created_at", nullable=false)
+	private Timestamp createdAt;
+
+	@JsonIgnore
+	@Version
+	@Column(name="updated_at", nullable=false)
+	private Timestamp updatedAt;
+
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -39,7 +64,15 @@ public class User {
 		this.lng = lng;
 	}
 
-	public Integer getId() {
+	public void setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public void setUpdatedAt(Timestamp updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
+	public String getId() {
 		return id;
 	}
 
@@ -57,5 +90,13 @@ public class User {
 
 	public Double getLng() {
 		return lng;
+	}
+
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+
+	public Timestamp getUpdatedAt() {
+		return updatedAt;
 	}
 }
