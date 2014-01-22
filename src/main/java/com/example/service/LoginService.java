@@ -25,9 +25,19 @@ public interface LoginService {
 
 	/**
 	 * ユーザのログイントークンを取得する
+	 * ユーザIdを元に取得
 	 *
-	 * @param userId
+	 * @param userId　ユーザId
 	 * @return
 	 */
 	public LoginToken getLoginToken(String userId);
+
+	/**
+	 * ユーザのログイントークンを取得する
+	 * ログイントークンを元に取得
+	 *
+	 * @param token ログイントークン
+	 * @return
+	 */
+	public LoginToken getLoginTokenByToken(String token);
 }
