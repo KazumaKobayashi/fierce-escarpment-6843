@@ -41,7 +41,7 @@ public class LoginServiceImpl implements LoginService {
 		// ユーザの存在チェック
 		User user = userService.getUser(userId);
 		if (user == null) {
-			throw new UserNotFoundException("Not found user. Id: " + userId);
+			throw new UserNotFoundException("User not found. Id: " + userId);
 		}
 		// パスワードの妥当性チェック
 		if (!StringUtils.equals(PasswordUtil.getPasswordHash(userId, password), user.getPassword())) {
@@ -70,16 +70,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Override
 	public LoginToken getLoginToken(String userId) {
-		TypedQuery<LoginToken> query = em.createQuery("select lt from LoginToken lt where lt.userId = :userId", LoginToken.class);
-		query.setParameter("userId", userId);
-		List<LoginToken> tokens = query.getResultList();
-		if (!tokens.isEmpty()) {
-			// 先頭を取り出す
-			LoginToken token = tokens.get(0);
-			return token;
-		} else {
-			return null;
-		}
+		return em.find(LoginToken.class, userId);
 	}
 
 	@Override
