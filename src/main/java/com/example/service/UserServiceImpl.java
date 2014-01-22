@@ -1,20 +1,23 @@
 package com.example.service;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.exception.CoordinateExistsException;
 import com.example.exception.UserExistsException;
+import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
 import com.example.model.User;
 import com.example.util.DateUtil;
+import com.example.util.EscapeUtil;
 import com.example.util.PasswordUtil;
 
 /**
@@ -26,17 +29,24 @@ import com.example.util.PasswordUtil;
 @Service
 public class UserServiceImpl implements UserService {
 
+	@Autowired
+	private CoordinateService coordinateService;
+
 	@PersistenceContext
 	EntityManager em;
 
 	@Transactional
 	@Override
-	public User doRegist(String userId, String password) throws UserExistsException {
-		User user = getUser(userId);
-		if (isValid(userId, password)
-				|| user != null) {
+	public User create(String userId, String password) throws UserExistsException {
+		User user = em.find(User.class, userId);
+		if (user != null) {
 			throw new UserExistsException("User already exists. Id: " + userId);
 		}
+		// エスケープ処理
+		userId = EscapeUtil.escape(userId);
+		userId = EscapeUtil.escape(password);
+
+		user = new User();
 		// 現在時刻のタイムスタンプを取得
 		Timestamp now = DateUtil.getCurrentTimestamp();
 
@@ -48,24 +58,35 @@ public class UserServiceImpl implements UserService {
 		user.setCreatedAt(now);
 		user.setUpdatedAt(now);
 		em.persist(user);
+		try {
+			coordinateService.create(userId, 0.0, 0.0);
+		} catch (CoordinateExistsException e) {
+			// 起こりえるわけがないけど念の為に
+			// TODO: ロガーの追加
+			e.printStackTrace();
+		}
+		return user;
+	}
 
+	@Transactional
+	@Override
+	public User update(String userId, String username) throws UserNotFoundException {
+		User user = em.find(User.class, userId);
+		if (user == null) {
+			throw new UserNotFoundException("User not found. Id: " + userId);
+		}
+
+		if (StringUtils.isNotBlank(username)) {
+			user.setUsername(username);
+		}
+		em.persist(user);
 		return user;
 	}
 
 	@Transactional
 	@Override
 	public User getUser(String userId) {
-		TypedQuery<User> query = em.createQuery("select u from User u where u.id = :id", User.class);
-		query.setParameter("id", userId);
-		List<User> users = query.getResultList();
-		if (!users.isEmpty()) {
-			// 先頭を取り出す
-			User user = users.get(0);
-			return user;
-		} else {
-			// ユーザが存在しない場合nullを返す
-			return null;
-		}
+		return em.find(User.class, userId);
 	}
 
 	@Transactional
@@ -78,10 +99,5 @@ public class UserServiceImpl implements UserService {
 		// TODO: 正しいステータスコード指定のこと
 		res.setStatusCode(0);
 		return res;
-	}
-
-	private boolean isValid(String userId, String password) {
-		// TODO: 不正文字列チェック(SQL Injection, etc...)
-		return false;
 	}
 }

@@ -16,6 +16,7 @@ import com.example.service.UserService;
  * 登録用のコントローラ
  *
  * @author Kazuki Hasegawa
+ * @author Kazuma Kobayashi
  */
 @Controller
 public class RegisterController {
@@ -33,11 +34,11 @@ public class RegisterController {
 	@ResponseBody
 	public String register(
 			@RequestParam("id") String userId,
-			@RequestParam("passwd") String password) {
+			@RequestParam("password") String password) {
 
 		Response res = new Response();
 		try {
-			User user = userService.doRegist(userId, password);
+			User user = userService.create(userId, password);
 			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 			res.addObjects("user", user);

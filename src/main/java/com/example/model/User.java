@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
@@ -27,16 +28,16 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@JsonProperty("id")
 	@Id
-	@JsonIgnore
 	@Column(name="user_id")
 	private String id;
 
 	@Column(name="username", nullable=false)
 	private String username;
 
-	@Column(name="password", nullable=false)
 	@JsonIgnore
+	@Column(name="password", nullable=false)
 	private String password;
 
 	@JsonIgnore
@@ -53,7 +54,7 @@ public class User implements Serializable {
 	@JoinColumn(name="user_id", insertable=false, updatable=false)
 	private Coordinate coord;
 
-	@JsonUnwrapped
+	@JsonIgnore
 	@OneToOne
 	@JoinColumn(name="user_id", insertable=false, updatable=false)
 	private LoginToken token;

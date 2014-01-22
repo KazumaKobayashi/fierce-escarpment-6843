@@ -14,6 +14,12 @@ import com.example.jackson.Response;
 import com.example.model.LoginToken;
 import com.example.service.LoginService;
 
+/**
+ * ログインのコントローラ
+ *
+ * @author Kazuki Hasegawa
+ * @author Kazuma Kobayashi
+ */
 @Controller
 public class LoginController {
 	@Autowired
@@ -31,7 +37,7 @@ public class LoginController {
 	@ResponseBody
 	public String login(
 			@RequestParam("id") String userId,
-			@RequestParam("passwd") String password){
+			@RequestParam("password") String password){
 		Response res = new Response();
 		try {
 			LoginToken token = loginService.doLogin(userId, password);

@@ -24,6 +24,7 @@ public class Coordinate implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@JsonIgnore
 	@Id
 	@Column(name="usre_id")
 	private String userId;
@@ -39,6 +40,10 @@ public class Coordinate implements Serializable {
 	@JoinColumn(name="user_id", insertable=false, updatable=false)
 	private User user;
 
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
 	public void setLat(Double lat) {
 		this.lat = lat;
 	}
@@ -49,6 +54,10 @@ public class Coordinate implements Serializable {
 
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	public String getUserId() {
+		return userId;
 	}
 
 	public Double getLat() {
