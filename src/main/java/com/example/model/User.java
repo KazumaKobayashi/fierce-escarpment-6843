@@ -11,6 +11,11 @@ import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * ユーザモデル
+ *
+ * @author Kazuki Hasegawa
+ */
 @Table(name="user")
 @Entity
 public class User implements Serializable {
@@ -31,8 +36,10 @@ public class User implements Serializable {
 	@JsonIgnore
 	private String password;
 
+	@Column(name="lat")
 	private Double lat;
 
+	@Column(name="lng")
 	private Double lng;
 
 	@JsonIgnore

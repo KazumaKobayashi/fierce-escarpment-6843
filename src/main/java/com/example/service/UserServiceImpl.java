@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaQuery;
 
 import org.springframework.stereotype.Service;
@@ -52,11 +52,10 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public User getUser(String userId) {
-		Query query = em.createQuery("select u from User u where u.id = :id");
+		TypedQuery<User> query = em.createQuery("select u from User u where u.id = :id", User.class);
 		query.setParameter("id", userId);
 		List<User> users = query.getResultList();
 		if (!users.isEmpty()) {

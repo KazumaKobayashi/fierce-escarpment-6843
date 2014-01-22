@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,15 +68,29 @@ public class LoginServiceImpl implements LoginService {
 		return token;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public LoginToken getLoginToken(String userId) {
-		Query query = em.createQuery("select lt from LoginToken lt where lt.userId = :userId");
+		TypedQuery<LoginToken> query = em.createQuery("select lt from LoginToken lt where lt.userId = :userId", LoginToken.class);
 		query.setParameter("userId", userId);
 		List<LoginToken> tokens = query.getResultList();
 		if (!tokens.isEmpty()) {
+			// 先頭を取り出す
 			LoginToken token = tokens.get(0);
 			return token;
+		} else {
+			return null;
+		}
+	}
+
+	@Override
+	public LoginToken getLoginTokenByToken(String token) {
+		TypedQuery<LoginToken> query = em.createQuery("select lt from LoginToken lt where lt.token = :token", LoginToken.class);
+		query.setParameter("token", token);
+		List<LoginToken> tokens = query.getResultList();
+		if (!tokens.isEmpty()) {
+			// 先頭を取り出す
+			LoginToken lToken = tokens.get(0);
+			return lToken;
 		} else {
 			return null;
 		}
