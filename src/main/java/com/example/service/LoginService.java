@@ -1,7 +1,8 @@
 package com.example.service;
 
 import com.example.exception.InvalidPasswordException;
-import com.example.exception.NotFoundUserException;
+import com.example.exception.LoginTokenExistsException;
+import com.example.exception.UserNotFoundException;
 import com.example.model.LoginToken;
 
 /**
@@ -18,6 +19,15 @@ public interface LoginService {
 	 * @param userId　ユーザId
 	 * @param password ユーザパスワード
 	 * @return
+	 * @throws LoginTokenExistsException 
 	 */
-	public LoginToken doLogin(String userId, String password) throws NotFoundUserException, InvalidPasswordException;
+	public LoginToken doLogin(String userId, String password) throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException;
+
+	/**
+	 * ユーザのログイントークンを取得する
+	 *
+	 * @param userId
+	 * @return
+	 */
+	public LoginToken getLoginToken(String userId);
 }

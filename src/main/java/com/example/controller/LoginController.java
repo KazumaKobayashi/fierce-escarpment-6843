@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.exception.InvalidPasswordException;
-import com.example.exception.NotFoundUserException;
+import com.example.exception.LoginTokenExistsException;
+import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
 import com.example.model.LoginToken;
 import com.example.service.LoginService;
@@ -37,10 +38,13 @@ public class LoginController {
 			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 			res.addObjects("token", token.getToken());
-		} catch (NotFoundUserException e) {
+		} catch (UserNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		} catch (InvalidPasswordException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+		} catch (LoginTokenExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		}

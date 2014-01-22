@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.example.exception.UserExistsException;
+import com.example.jackson.Response;
+import com.example.model.User;
 import com.example.service.UserService;
 
 /**
@@ -32,6 +35,16 @@ public class RegisterController {
 			@RequestParam("id") String userId,
 			@RequestParam("passwd") String password) {
 
-		return userService.doRegist(userId, password).getResponseJson();
+		Response res = new Response();
+		try {
+			User user = userService.doRegist(userId, password);
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+			res.addObjects("user", user);
+		} catch (UserExistsException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+		}
+		return res.getResponseJson();
 	}
 }

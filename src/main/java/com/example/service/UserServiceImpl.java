@@ -11,6 +11,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.exception.UserExistsException;
 import com.example.jackson.Response;
 import com.example.model.User;
 import com.example.util.DateUtil;
@@ -30,53 +31,42 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public Response doRegist(String userId, String password) {
-		Response res = new Response();
+	public User doRegist(String userId, String password) throws UserExistsException {
+		User user = getUser(userId);
 		if (isValid(userId, password)
-				// TODO: 正しいエラーコード設定のこと
-				|| getUser(userId).getStatusCode() != -1) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
-		} else {
-			// 現在時刻のタイムスタンプを取得
-			Timestamp now = DateUtil.getCurrentTimestamp();
-
-			// ユーザ登録
-			User user = new User();
-			user.setId(userId);
-			user.setUsername(userId);
-			user.setPassword(PasswordUtil.getPasswordHash(userId, password));
-			user.setCreatedAt(now);
-			user.setUpdatedAt(now);
-			em.persist(user);
-			// TODO: 正しいサクセスコードを設定のこと
-			res.setStatusCode(0);
+				|| user != null) {
+			throw new UserExistsException("User already exists. Id: " + userId);
 		}
-		return res;
+		// 現在時刻のタイムスタンプを取得
+		Timestamp now = DateUtil.getCurrentTimestamp();
+
+		// ユーザ登録
+		user = new User();
+		user.setId(userId);
+		user.setUsername(userId);
+		user.setPassword(PasswordUtil.getPasswordHash(userId, password));
+		user.setCreatedAt(now);
+		user.setUpdatedAt(now);
+		em.persist(user);
+
+		return user;
 	}
 
 	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public Response getUser(String userId) {
+	public User getUser(String userId) {
 		Query query = em.createQuery("select u from User u where u.id = :id");
 		query.setParameter("id", userId);
 		List<User> users = query.getResultList();
-		Response res = new Response();
-		if (users.size() > 0) {
+		if (!users.isEmpty()) {
 			// 先頭を取り出す
 			User user = users.get(0);
-			user.setLat(123.123);
-			user.setLng(456.456);
-			res.addObjects("user", user);
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			return user;
 		} else {
-			// それ以外は知らない
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			// ユーザが存在しない場合nullを返す
+			return null;
 		}
-		return res;
 	}
 
 	@Transactional
@@ -86,7 +76,7 @@ public class UserServiceImpl implements UserService {
 		c.from(User.class);
 		Response res = new Response();
 		res.addObjects("users", em.createQuery(c).getResultList());
-		// TODO: 正しいサクセスコード指定のこと
+		// TODO: 正しいステータスコード指定のこと
 		res.setStatusCode(0);
 		return res;
 	}

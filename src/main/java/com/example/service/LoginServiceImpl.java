@@ -9,11 +9,13 @@ import javax.persistence.Query;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.InvalidPasswordException;
-import com.example.exception.NotFoundUserException;
+import com.example.exception.LoginTokenExistsException;
+import com.example.exception.UserNotFoundException;
 import com.example.model.LoginToken;
 import com.example.model.User;
 import com.example.util.DateUtil;
@@ -27,38 +29,56 @@ import com.example.util.PasswordUtil;
  */
 @Service
 public class LoginServiceImpl implements LoginService {
+	@Autowired
+	private UserService userService;
 
 	@PersistenceContext
 	EntityManager em;
 
-	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
-	public LoginToken doLogin(String userId, String password) throws NotFoundUserException, InvalidPasswordException {
-		Query query = em.createQuery("select u from User u where u.id = :id");
-		query.setParameter("id", userId);
-		List<User> users = query.getResultList();
-		if (users.size() > 0) {
-			// 先頭を取り出す
-			User user = users.get(0);
-			if (StringUtils.equals(PasswordUtil.getPasswordHash(userId, password), user.getPassword())) {
-				// 現在時刻のタイムスタンプを取得
-				Timestamp now = DateUtil.getCurrentTimestamp();
+	public LoginToken doLogin(String userId, String password) throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException {
+		// ユーザの存在チェック
+		User user = userService.getUser(userId);
+		if (user == null) {
+			throw new UserNotFoundException("Not found user. Id: " + userId);
+		}
+		// パスワードの妥当性チェック
+		if (!StringUtils.equals(PasswordUtil.getPasswordHash(userId, password), user.getPassword())) {
+			throw new InvalidPasswordException("Invalid password. Id:" + userId);
+		}
+		// ログイントークンの存在チェク
+		LoginToken token = getLoginToken(userId);
+		if (token != null) {
+			// 存在する場合はエラー
+			throw new LoginTokenExistsException("Login token already exists. Token: " + token.getToken());
+		}
 
-				// ログイントークンの作成
-				LoginToken token = new LoginToken();
-				token.setUserId(user.getId());
-				token.setToken(RandomStringUtils.randomAlphanumeric(10));
-				token.setCreatedAt(now);
-				token.setUpdatedAt(now);
-				em.persist(token);
+		// 現在時刻のタイムスタンプを取得
+		Timestamp now = DateUtil.getCurrentTimestamp();
 
-				return token;
-			} else {
-				throw new InvalidPasswordException("Invalid password. Id:" + userId);
-			}
+		// ログイントークンの作成
+		token = new LoginToken();
+		token.setUserId(user.getId());
+		token.setToken(RandomStringUtils.randomAlphanumeric(10));
+		token.setCreatedAt(now);
+		token.setUpdatedAt(now);
+		em.persist(token);
+
+		return token;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public LoginToken getLoginToken(String userId) {
+		Query query = em.createQuery("select lt from LoginToken lt where lt.userId = :userId");
+		query.setParameter("userId", userId);
+		List<LoginToken> tokens = query.getResultList();
+		if (!tokens.isEmpty()) {
+			LoginToken token = tokens.get(0);
+			return token;
 		} else {
-			throw new NotFoundUserException("Not found user. Id: " + userId);
+			return null;
 		}
 	}
 }

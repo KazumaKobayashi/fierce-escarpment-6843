@@ -1,17 +1,17 @@
 package com.example.exception;
 
 /**
- *  ユーザが見つからなかった場合の例外
+ * すでにユーザが存在する場合の例外
  *
  * @author Kazuki Hasegawa
  */
-public class UserNotFoundException extends Exception {
+public class UserExistsException extends Exception {
 	/**
 	 * Default serializable id
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public UserNotFoundException(String message) {
+	public UserExistsException(String message) {
 		super(message);
 	}
 }

@@ -1,6 +1,8 @@
 package com.example.service;
 
+import com.example.exception.UserExistsException;
 import com.example.jackson.Response;
+import com.example.model.User;
 
 /**
  * ユーザ関係のサービス
@@ -13,18 +15,18 @@ public interface UserService {
 	 *
 	 * @param userId ユーザId
 	 * @param password ユーザパスワード
-	 * @return 登録の結果を返す
+	 * @return
+	 * @throws UserExistsException 
 	 */
-	public Response doRegist(String userId, String password);
+	public User doRegist(String userId, String password) throws UserExistsException;
 
 	/**
 	 * ユーザを取得する
-	 * 成功した場合は、ユーザの情報をJsonで返却する
 	 *
 	 * @param userId ユーザId
 	 * @return
 	 */
-	public Response getUser(String userId);
+	public User getUser(String userId);
 
 	/**
 	 * ユーザ一覧を取得する
