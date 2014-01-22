@@ -6,6 +6,8 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -14,7 +16,7 @@ import javax.persistence.Version;
  *
  * @author Kazuki Hasegawa
  */
-@Table(name="login_token")
+@Table(name="login_tokens")
 @Entity
 public class LoginToken implements Serializable {
 	/**
@@ -36,6 +38,10 @@ public class LoginToken implements Serializable {
 	@Column(name="updated_at", nullable=false)
 	private Timestamp updatedAt;
 
+	@OneToOne
+	@JoinColumn(name="user_id", insertable=false, updatable=false)
+	private User user;
+
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
@@ -51,7 +57,11 @@ public class LoginToken implements Serializable {
 	public void setUpdatedAt(Timestamp updatedAt) {
 		this.updatedAt = updatedAt;
 	}
-	
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
 	public String getUserId() {
 		return userId;
 	}
@@ -66,5 +76,9 @@ public class LoginToken implements Serializable {
 
 	public Timestamp getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public User getUser() {
+		return user;
 	}
 }

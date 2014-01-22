@@ -24,10 +24,12 @@ public class UserTest extends AbstractTest {
 		String name = "Kazuma";
 		Double lat = 45.1235, lng = 41.345;
 
+		Coordinate coord = new Coordinate();
+		coord.setLng(lng);
+		coord.setLat(lat);
 		User user = new User();
 		user.setUsername(name);
-		user.setLng(lng);
-		user.setLat(lat);
+		user.setCoord(coord);
 
 		String json = mapper.writeValueAsString(user);
 		StringBuilder builder = new StringBuilder("{\"username\":\"");

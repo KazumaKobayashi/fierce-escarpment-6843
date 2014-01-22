@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import com.example.AbstractTest;
+import com.example.model.Coordinate;
 import com.example.model.User;
 
 import static org.junit.Assert.assertThat;
@@ -36,10 +37,12 @@ public class GroupTest extends AbstractTest {
 	private User createUser() {
 		String name = "Kazuma";
 		Double lat = 45.1235, lng = 41.345;
+		Coordinate coord = new Coordinate();
+		coord.setLng(lng);
+		coord.setLat(lat);
 		User user = new User();
 		user.setUsername(name);
-		user.setLng(lng);
-		user.setLat(lat);
+		user.setCoord(coord);
 		return user;
 	}
 }
