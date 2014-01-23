@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService {
 		}
 		// エスケープ処理
 		userId = EscapeUtil.escape(userId);
-		userId = EscapeUtil.escape(password);
+		password = EscapeUtil.escape(password);
 
 		user = new User();
 		// 現在時刻のタイムスタンプを取得
