@@ -49,6 +49,7 @@ public class RegisterController {
 		} catch (UserExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
+			res.setErrorMessage(e.toString());
 		}
 		// レスポンスの設定
 		response.setContentType("application/json");
