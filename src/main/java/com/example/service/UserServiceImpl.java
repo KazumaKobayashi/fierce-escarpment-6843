@@ -45,7 +45,6 @@ public class UserServiceImpl implements UserService {
 		userId = EscapeUtil.escape(userId);
 		password = EscapeUtil.escape(password);
 
-		user = new User();
 		// 現在時刻のタイムスタンプを取得
 		Timestamp now = DateUtil.getCurrentTimestamp();
 
