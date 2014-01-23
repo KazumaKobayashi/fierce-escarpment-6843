@@ -44,7 +44,7 @@ public class LoginController {
 			HttpServletResponse response) throws IOException{
 		Response res = new Response();
 		try {
-			LoginToken token = loginService.doLogin(userId, password);
+			LoginToken token = loginService.createToken(userId, password);
 			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 			res.addObjects("token", token.getToken());

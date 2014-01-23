@@ -21,7 +21,7 @@ public interface LoginService {
 	 * @return
 	 * @throws LoginTokenExistsException 
 	 */
-	public LoginToken doLogin(String userId, String password) throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException;
+	public LoginToken createToken(String userId, String password) throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException;
 
 	/**
 	 * ユーザのログイントークンを取得する

@@ -37,7 +37,7 @@ public class LoginServiceImpl implements LoginService {
 
 	@Transactional
 	@Override
-	public LoginToken doLogin(String userId, String password) throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException {
+	public LoginToken createToken(String userId, String password) throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException {
 		// ユーザの存在チェック
 		User user = userService.getUser(userId);
 		if (user == null) {
