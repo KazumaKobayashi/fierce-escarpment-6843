@@ -1,7 +1,8 @@
 package com.example.service;
 
+import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserExistsException;
-import com.example.jackson.Response;
+import com.example.exception.UserNotFoundException;
 import com.example.model.User;
 
 /**
@@ -10,15 +11,27 @@ import com.example.model.User;
  * @author Kazuki Hasegawa
  */
 public interface UserService {
+
 	/**
-	 * ユーザの登録を行う
+	 * ユーザを作成する
 	 *
-	 * @param userId ユーザId
-	 * @param password ユーザパスワード
+	 * @param userId
+	 * @param password
 	 * @return
-	 * @throws UserExistsException 
+	 * @throws UserExistsException
 	 */
-	public User doRegist(String userId, String password) throws UserExistsException;
+	public User create(String userId, String password) throws UserExistsException;
+
+	/**
+	 * ユーザ情報を更新する
+	 *
+	 * @param userId
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws UserNotFoundException
+	 */
+	public User update(String userId, String username) throws UserNotFoundException;
 
 	/**
 	 * ユーザを取得する
@@ -29,9 +42,14 @@ public interface UserService {
 	public User getUser(String userId);
 
 	/**
-	 * ユーザ一覧を取得する
+	 * ユーザのパスワードを変更する
 	 *
+	 * @param userId
+	 * @param currentPassword
+	 * @param newPassword
 	 * @return
+	 * @throws UserNotFoundException
 	 */
-	public Response getUsers();
+	public User changePassword(String userId, String currentPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException;
+
 }

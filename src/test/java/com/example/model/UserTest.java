@@ -20,23 +20,28 @@ import static org.hamcrest.core.Is.is;
 @RunWith(JUnit4.class)
 public class UserTest extends AbstractTest {
 	@Test
-	public void testWriteValueAsString() throws IOException {
-		String name = "Kazuma";
+	public void JSON文字列変換テスト() throws IOException {
+		String id = "Kazuma";
 		Double lat = 45.1235, lng = 41.345;
 
+		Coordinate coord = new Coordinate();
+		coord.setLng(lng);
+		coord.setLat(lat);
 		User user = new User();
-		user.setUsername(name);
-		user.setLng(lng);
-		user.setLat(lat);
+		user.setId(id);
+		user.setUsername(id);
+		user.setCoord(coord);
 
 		String json = mapper.writeValueAsString(user);
 		StringBuilder builder = new StringBuilder("{\"username\":\"");
-		builder.append(name);
+		builder.append(id);
 		builder.append("\",\"lat\":");
 		builder.append(lat);
 		builder.append(",\"lng\":");
 		builder.append(lng);
-		builder.append("}");
+		builder.append(",\"id\":\"");
+		builder.append(id);
+		builder.append("\"}");
 		assertThat(json, is(builder.toString()));
 	}
 }

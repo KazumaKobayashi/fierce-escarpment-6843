@@ -6,17 +6,21 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 
 /**
  * ユーザモデル
  *
  * @author Kazuki Hasegawa
  */
-@Table(name="user")
+@Table(name="users")
 @Entity
 public class User implements Serializable {
 	/**
@@ -24,23 +28,17 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	@JsonProperty("id")
 	@Id
-	@JsonIgnore
 	@Column(name="user_id")
 	private String id;
 
 	@Column(name="username", nullable=false)
 	private String username;
 
-	@Column(name="password", nullable=false)
 	@JsonIgnore
+	@Column(name="password", nullable=false)
 	private String password;
-
-	@Column(name="lat")
-	private Double lat;
-
-	@Column(name="lng")
-	private Double lng;
 
 	@JsonIgnore
 	@Column(name="created_at", nullable=false)
@@ -50,6 +48,16 @@ public class User implements Serializable {
 	@Version
 	@Column(name="updated_at", nullable=false)
 	private Timestamp updatedAt;
+
+	@JsonUnwrapped
+	@OneToOne
+	@JoinColumn(name="user_id", insertable=false, updatable=false)
+	private Coordinate coord;
+
+	@JsonIgnore
+	@OneToOne
+	@JoinColumn(name="user_id", insertable=false, updatable=false)
+	private LoginToken token;
 
 	public void setId(String id) {
 		this.id = id;
@@ -63,20 +71,20 @@ public class User implements Serializable {
 		this.password = password;
 	}
 
-	public void setLat(Double lat) {
-		this.lat = lat;
-	}
-
-	public void setLng(Double lng) {
-		this.lng = lng;
-	}
-
 	public void setCreatedAt(Timestamp createdAt) {
 		this.createdAt = createdAt;
 	}
 
 	public void setUpdatedAt(Timestamp updatedAt) {
 		this.updatedAt = updatedAt;
+	}
+
+	public void setCoord(Coordinate coord) {
+		this.coord = coord;
+	}
+
+	public void setToken(LoginToken token) {
+		this.token = token;
 	}
 
 	public String getId() {
@@ -91,19 +99,19 @@ public class User implements Serializable {
 		return password;
 	}
 
-	public Double getLat() {
-		return lat;
-	}
-
-	public Double getLng() {
-		return lng;
-	}
-
 	public Timestamp getCreatedAt() {
 		return createdAt;
 	}
 
 	public Timestamp getUpdatedAt() {
 		return updatedAt;
+	}
+
+	public Coordinate getCoord() {
+		return coord;
+	}
+
+	public LoginToken getToken() {
+		return token;
 	}
 }

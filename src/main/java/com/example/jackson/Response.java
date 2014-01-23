@@ -31,6 +31,10 @@ public class Response {
 		objects.put("code", statusCode);
 	}
 
+	public void setErrorMessage(String message) {
+		objects.put("msg", message);
+	}
+
 	/**
 	 * ステータスコードの取得
 	 *
