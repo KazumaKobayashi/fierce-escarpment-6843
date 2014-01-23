@@ -1,11 +1,14 @@
 package com.example.controller;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.exception.UserExistsException;
 import com.example.jackson.Response;
@@ -29,12 +32,13 @@ public class RegisterController {
 	 * @param userId ユーザId
 	 * @param password ユーザパスワード
 	 * @return
+	 * @throws IOException 
 	 */
 	@RequestMapping(value="/register", method=RequestMethod.POST)
-	@ResponseBody
-	public String register(
+	public void register(
 			@RequestParam("id") String userId,
-			@RequestParam("password") String password) {
+			@RequestParam("password") String password,
+			HttpServletResponse response) throws IOException {
 
 		Response res = new Response();
 		try {
@@ -46,6 +50,8 @@ public class RegisterController {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		}
-		return res.getResponseJson();
+		// レスポンスの設定
+		response.setContentType("application/json");
+		response.getWriter().print(res.getResponseJson());
 	}
 }
