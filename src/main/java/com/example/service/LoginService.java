@@ -13,7 +13,7 @@ import com.example.model.LoginToken;
 public interface LoginService {
 
 	/**
-	 * ログインを行う
+	 * ログイントークンを作成する
 	 * 実際の処理は、ログイン認証を得たトークンの発行を行う
 	 *
 	 * @param userId　ユーザId
