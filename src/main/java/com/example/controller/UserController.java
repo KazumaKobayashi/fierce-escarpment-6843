@@ -1,12 +1,15 @@
 package com.example.controller;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserNotFoundException;
@@ -32,11 +35,12 @@ public class UserController {
 	 * ユーザの情報を取得
 	 *
 	 * @param userId
+	 * @param response
 	 * @return
+	 * @throws IOException 
 	 */
 	@RequestMapping(value="/users/{id}/info", method=RequestMethod.GET)
-	@ResponseBody
-	public String user(@PathVariable("id") String userId) {
+	public void user(@PathVariable("id") String userId, HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		User user = userService.getUser(userId);
 		if (user != null) {
@@ -47,20 +51,25 @@ public class UserController {
 			// TODO: 正しいエラーコードを設定のこと(UserNotFoundExceptionと同じ)
 			res.setStatusCode(-1);
 		}
-		return res.getResponseJson();
+		// 返却する値
+		response.setContentType("application/json");
+		response.getWriter().print(res.getResponseJson());
 	}
 
 	/**
 	 * ユーザ情報を更新
 	 *
 	 * @param userId
+	 * @param username
+	 * @param response
 	 * @return
+	 * @throws IOException 
 	 */
 	@RequestMapping(value="/users/{id}/info", method=RequestMethod.PUT)
-	@ResponseBody
-	public String userUpdate(
+	public void userUpdate(
 			@PathVariable("id") String userId,
-			@RequestParam("name") String username) {
+			@RequestParam("name") String username,
+			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
 			User user = userService.update(userId, username);
@@ -71,7 +80,9 @@ public class UserController {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		}
-		return res.getResponseJson();
+		// 返却する値
+		response.setContentType("application/json");
+		response.getWriter().print(res.getResponseJson());
 	}
 
 	/**
@@ -81,14 +92,16 @@ public class UserController {
 	 * @param userId
 	 * @param currentPassword
 	 * @param newPassword
+	 * @param response
 	 * @return
+	 * @throws IOException 
 	 */
 	@RequestMapping(value="/users/{id}/password", method=RequestMethod.PUT)
-	@ResponseBody
-	public String update(
+	public void update(
 			@PathVariable("id") String userId,
 			@RequestParam("current_password") String currentPassword,
-			@RequestParam("new_password") String newPassword) {
+			@RequestParam("new_password") String newPassword,
+			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
 			userService.changePassword(userId, currentPassword, newPassword);
@@ -101,7 +114,9 @@ public class UserController {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		}
-		return res.getResponseJson();
+		// 返却する値
+		response.setContentType("application/json");
+		response.getWriter().print(res.getResponseJson());
 	}
 
 	/**
@@ -110,20 +125,24 @@ public class UserController {
 	 * @param userId
 	 * @param lat
 	 * @param lng
+	 * @param response
 	 * @return
+	 * @throws IOException 
 	 */
 	@RequestMapping(value="/users/{id}/coordinate", method=RequestMethod.PUT)
-	@ResponseBody
-	public String update(
+	public void update(
 			@PathVariable("id") String userId,
 			@RequestParam("lat") Double lat,
-			@RequestParam("lng") Double lng) {
+			@RequestParam("lng") Double lng,
+			HttpServletResponse response) throws IOException {
 		lat = lat == null ? 0 : lat;
 		lng = lng == null ? 0 : lng;
 		Response res = new Response();
 		coordinateService.update(userId, lat, lng);
 		// TODO: 正しいステータスコードを設定のこと
 		res.setStatusCode(0);
-		return res.getResponseJson();
+		// 返却する値
+		response.setContentType("application/json");
+		response.getWriter().print(res.getResponseJson());
 	}
 }
