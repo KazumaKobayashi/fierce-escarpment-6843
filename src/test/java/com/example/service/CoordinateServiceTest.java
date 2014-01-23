@@ -25,7 +25,6 @@ public class CoordinateServiceTest {
 	private CoordinateService service;
 
 	private String id = CoordinateServiceTest.class.getName();
-	private String password = "kazumakobayashi";
 
 	@Before
 	public void setup() throws CoordinateExistsException {
