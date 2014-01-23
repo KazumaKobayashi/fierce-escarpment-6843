@@ -29,19 +29,20 @@ public class GroupTest extends AbstractTest {
 
 		StringBuilder builder = new StringBuilder("{\"name\":\"");
 		builder.append(name);
-		builder.append("\",\"users\":{\"kazuma01\":{\"username\":\"Kazuma\",\"lat\":45.1235,\"lng\":41.345}}}");
+		builder.append("\",\"users\":{\"kazuma01\":{\"username\":\"Kazuma\",\"lat\":45.1235,\"lng\":41.345,\"id\":\"Kazuma\"}}}");
 		assertThat(json, is(builder.toString()));
 		System.out.println(mapper.writeValueAsString(users));
 	}
 
 	private User createUser() {
-		String name = "Kazuma";
+		String id = "Kazuma";
 		Double lat = 45.1235, lng = 41.345;
 		Coordinate coord = new Coordinate();
 		coord.setLng(lng);
 		coord.setLat(lat);
 		User user = new User();
-		user.setUsername(name);
+		user.setId(id);
+		user.setUsername(id);
 		user.setCoord(coord);
 		return user;
 	}
