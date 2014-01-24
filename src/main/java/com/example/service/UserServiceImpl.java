@@ -53,8 +53,8 @@ public class UserServiceImpl implements UserService {
 			throw new EmailExistsException("Email already exists. Email: " + email);
 		}
 		// エスケープ処理
-		userId = EscapeUtil.escape(userId);
-		password = EscapeUtil.escape(password);
+		userId = EscapeUtil.escapeSQL(userId);
+		password = EscapeUtil.escapeSQL(password);
 
 		// 現在時刻のタイムスタンプを取得
 		Timestamp now = DateUtil.getCurrentTimestamp();
