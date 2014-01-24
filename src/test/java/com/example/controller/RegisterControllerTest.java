@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,6 +28,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class RegisterControllerTest extends AbstractControllerTest {
 	private String id = RegisterControllerTest.class.getName();
 	private String password = "kazumakobayashi";
+
+	@Before
+	public void setup() throws Exception {
+		super.setup();
+	}
 
 	@Test
 	public void  登録テスト() throws Exception {
