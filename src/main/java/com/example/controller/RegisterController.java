@@ -53,15 +53,15 @@ public class RegisterController {
 		} catch (UserExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
-			res.setErrorMessage(e.toString());
+			res.addErrorMessage(e.toString());
 		} catch (InvalidEmailException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
-			res.setErrorMessage(e.toString());
+			res.addErrorMessage(e.toString());
 		} catch (EmailExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
-			res.setErrorMessage(e.toString());
+			res.addErrorMessage(e.toString());
 		}
 		// レスポンスの設定
 		response.setContentType("application/json");

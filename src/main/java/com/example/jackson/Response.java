@@ -1,7 +1,10 @@
 package com.example.jackson;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -31,8 +34,21 @@ public class Response {
 		objects.put("code", statusCode);
 	}
 
-	public void setErrorMessage(String message) {
-		objects.put("msg", message);
+	/**
+	 * エラーメッセージを追加する
+	 *
+	 * @param message
+	 */
+	@SuppressWarnings("unchecked")
+	public void addErrorMessage(String message) {
+		if (objects.containsKey("msg")) {
+			Object obj = objects.get("msg");
+			if (obj instanceof List) {
+				((List<String>) obj).add(message);
+			}
+		} else {
+			objects.put("msg", new ArrayList<String>(Arrays.asList(message)));
+		}
 	}
 
 	/**
