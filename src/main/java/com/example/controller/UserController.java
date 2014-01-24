@@ -68,11 +68,12 @@ public class UserController {
 	@RequestMapping(value="/users/{id}/info", method=RequestMethod.PUT)
 	public void userUpdate(
 			@PathVariable("id") String userId,
+			@RequestParam("email") String email,
 			@RequestParam("name") String username,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
-			User user = userService.update(userId, username);
+			User user = userService.update(userId, email, username);
 			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 			res.addObjects("user", user);

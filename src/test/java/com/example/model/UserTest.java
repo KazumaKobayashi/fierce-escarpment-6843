@@ -43,7 +43,7 @@ public class UserTest extends AbstractModelTest {
 		JsonAssert
 			.with(json)
 			.assertThat("$.id", is(id))
-			.assertThat("$.username", is(id))
+			.assertThat("$.name", is(id))
 			.assertThat("$.lat", is(lat))
 			.assertThat("$.lng", is(lng));
 	}

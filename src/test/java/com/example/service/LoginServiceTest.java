@@ -9,6 +9,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.exception.EmailExistsException;
+import com.example.exception.InvalidEmailException;
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.LoginTokenExistsException;
 import com.example.exception.UserExistsException;
@@ -36,12 +38,13 @@ public class LoginServiceTest {
 	private UserService userService;
 
 	private String id = LoginServiceTest.class.getName();
+	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
 
 	@Before
-	public void setup() throws UserExistsException, UserNotFoundException, InvalidPasswordException, LoginTokenExistsException {
+	public void setup() throws UserExistsException, UserNotFoundException, InvalidPasswordException, LoginTokenExistsException, InvalidEmailException, EmailExistsException {
 		// ユーザの作成
-		userService.create(id, password);
+		userService.create(id, email, password);
 		// ログイントークンの作成
 		service.createToken(id, password);
 	}

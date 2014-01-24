@@ -9,6 +9,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.exception.EmailExistsException;
+import com.example.exception.InvalidEmailException;
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserExistsException;
 import com.example.exception.UserNotFoundException;
@@ -35,12 +37,13 @@ public class UserServiceTest {
 	private UserService service;
 
 	private String id = UserServiceTest.class.getName();
+	private String email = "example@example.com";
 	private String password = "kazumekobayashi";
 
 	@Before
-	public void setup() throws UserExistsException {
+	public void setup() throws UserExistsException, InvalidEmailException, EmailExistsException {
 		// ユーザの作成
-		service.create(id, password);
+		service.create(id, email, password);
 	}
 
 	/**
@@ -52,29 +55,64 @@ public class UserServiceTest {
 		User user = service.getUser(id);
 		assertThat(user, is(notNullValue()));
 		assertThat(user.getId(), is(id));
+		assertThat(user.getEmail(), is(email));
 		assertThat(user.getUsername(), is(id));
 		assertThat(user.getPassword(), is(PasswordUtil.getPasswordHash(id, password)));
 		assertThat(user.getToken(), is(nullValue()));
 	}
 
 	/**
-	 * ユーザ情報更新テスト
+	 * ユーザ情報取得テスト（メールアドレス）
+	 * ※ ユーザ名はデフォルトだとユーザIDと同じ
+	 */
+	@Test
+	public void ユーザ情報をメールアドレスから取得する() {
+		User user = service.getUserByEmail(email);
+		assertThat(user, is(notNullValue()));
+		assertThat(user.getId(), is(id));
+		assertThat(user.getEmail(), is(email));
+		assertThat(user.getUsername(), is(id));
+		assertThat(user.getPassword(), is(PasswordUtil.getPasswordHash(id, password)));
+		assertThat(user.getToken(), is(nullValue()));
+	}
+
+	/**
+	 * ユーザ名更新テスト
 	 * ※ ユーザ名はデフォルトだとユーザIDと同じ
 	 *
 	 * @throws UserNotFoundException
 	 */
 	@Test
-	public void ユーザ情報を更新する() throws UserNotFoundException {
+	public void ユーザ名を更新する() throws UserNotFoundException {
 		User user = service.getUser(id);
 		assertThat(user.getUsername(), is(id));
 
 		// 名前を変更する
 		String username = "Kazuma";
-		service.update(id, username);
+		service.update(id, email, username);
 
 		// 再取得
 		user = service.getUser(id);
 		assertThat(user.getUsername(), is(username));
+	}
+
+	/**
+	 * メールアドレス更新テスト
+	 *
+	 * @throws UserNotFoundException
+	 */
+	@Test
+	public void メールアドレスを更新する() throws UserNotFoundException {
+		User user = service.getUser(id);
+		assertThat(user.getEmail(), is(email));
+
+		// メールアドレスを変更する
+		String newEmail = "kazuma@kazuma.com";
+		service.update(id, newEmail, id);
+
+		// 再取得
+		user = service.getUser(id);
+		assertThat(user.getEmail(), is(newEmail));
 	}
 
 	/**

@@ -1,6 +1,5 @@
 package com.example.controller;
 
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,21 +26,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(locations = "classpath:testContext.xml")
 public class RegisterControllerTest extends AbstractControllerTest {
 	private String id = RegisterControllerTest.class.getName();
+	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
-
-	@Before
-	public void setup() throws Exception {
-		super.setup();
-	}
 
 	@Test
 	public void  登録テスト() throws Exception {
 		mockMvc.perform(post("/register")
 						.param("id", id)
+						.param("email", email)
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: Successコードと比較
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.user.id").value(id))
+			.andExpect(jsonPath("$.user.name").value(id))
+			.andExpect(jsonPath("$.user.email").value(email));
 	}
 }
