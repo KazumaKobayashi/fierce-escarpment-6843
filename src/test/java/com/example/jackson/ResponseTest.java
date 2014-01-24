@@ -30,7 +30,6 @@ public class ResponseTest extends AbstractModelTest {
 		res.addErrorMessage(err1);
 		res.addErrorMessage(err2);
 
-		System.out.println(res.getResponseJson());
 		JsonAssert
 			.with(res.getResponseJson())
 			.assertThat("$.code", is(0))
