@@ -52,15 +52,15 @@ public class LoginController {
 		} catch (UserNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
-			res.setErrorMessage(e.toString());
+			res.addErrorMessage(e.toString());
 		} catch (InvalidPasswordException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
-			res.setErrorMessage(e.toString());
+			res.addErrorMessage(e.toString());
 		} catch (LoginTokenExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
-			res.setErrorMessage(e.toString());
+			res.addErrorMessage(e.toString());
 		}
 		// レスポンスの設定
 		response.setContentType("application/json");
