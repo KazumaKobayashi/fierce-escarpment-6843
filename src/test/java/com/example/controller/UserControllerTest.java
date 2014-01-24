@@ -31,6 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ContextConfiguration(locations = "classpath:testContext.xml")
 public class UserControllerTest extends AbstractControllerTest {
 	private String id = UserControllerTest.class.getName();
+	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
 
 	private String token = StringUtils.EMPTY;
@@ -41,11 +42,15 @@ public class UserControllerTest extends AbstractControllerTest {
 		// ユーザ登録
 		mockMvc.perform(post("/register")
 						.param("id", id)
+						.param("email", email)
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			// TODO: Successコードと比較
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.user.id").value(id))
+			.andExpect(jsonPath("$.user.name").value(id))
+			.andExpect(jsonPath("$.user.email").value(email));
 		// ログイントークン発行
 		MvcResult result = mockMvc.perform(post("/login")
 						.param("id", id)
@@ -83,6 +88,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	public void ユーザ情報を更新する() throws Exception {
 		mockMvc.perform(put("/users/" + id + "/info")
 						.param("token", token)
+						.param("email", email)
 						.param("name", id))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))

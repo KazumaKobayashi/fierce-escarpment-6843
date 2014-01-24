@@ -33,7 +33,12 @@ public class User implements Serializable {
 	@Column(name="user_id")
 	private String id;
 
-	@Column(name="username", nullable=false)
+	@JsonProperty("email")
+	@Column(name="email", unique=true, nullable=false)
+	private String email;
+
+	@JsonProperty("name")
+	@Column(name="name", nullable=false)
 	private String username;
 
 	@JsonIgnore
@@ -63,6 +68,10 @@ public class User implements Serializable {
 		this.id = id;
 	}
 
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
 	public void setUsername(String username) {
 		this.username = username;
 	}
@@ -89,6 +98,10 @@ public class User implements Serializable {
 
 	public String getId() {
 		return id;
+	}
+
+	public String getEmail() {
+		return email;
 	}
 
 	public String getUsername() {

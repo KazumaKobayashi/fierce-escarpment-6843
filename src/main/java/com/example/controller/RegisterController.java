@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.exception.EmailExistsException;
+import com.example.exception.InvalidEmailException;
 import com.example.exception.UserExistsException;
 import com.example.jackson.Response;
 import com.example.model.User;
@@ -38,16 +40,25 @@ public class RegisterController {
 	@RequestMapping(value="/register", method=RequestMethod.POST)
 	public void register(
 			@RequestParam("id") String userId,
+			@RequestParam("email") String email,
 			@RequestParam("password") String password,
 			HttpServletResponse response) throws IOException {
 
 		Response res = new Response();
 		try {
-			User user = userService.create(userId, password);
+			User user = userService.create(userId, email, password);
 			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 			res.addObjects("user", user);
 		} catch (UserExistsException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+			res.setErrorMessage(e.toString());
+		} catch (InvalidEmailException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+			res.setErrorMessage(e.toString());
+		} catch (EmailExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 			res.setErrorMessage(e.toString());
