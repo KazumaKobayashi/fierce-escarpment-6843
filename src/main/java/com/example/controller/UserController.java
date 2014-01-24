@@ -24,6 +24,7 @@ import com.example.service.UserService;
  * @author Kauzki Hasegawa
  * @author Kazuma Kobaayshi
  */
+@RequestMapping("/users")
 @Controller
 public class UserController {
 	@Autowired
@@ -39,7 +40,7 @@ public class UserController {
 	 * @return
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/users/{id}/info", method=RequestMethod.GET)
+	@RequestMapping(value="/{id}/info", method=RequestMethod.GET)
 	public void user(@PathVariable("id") String userId, HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		User user = userService.getUser(userId);
@@ -65,7 +66,7 @@ public class UserController {
 	 * @return
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/users/{id}/info", method=RequestMethod.PUT)
+	@RequestMapping(value="/{id}/info", method=RequestMethod.PUT)
 	public void userUpdate(
 			@PathVariable("id") String userId,
 			@RequestParam("email") String email,
@@ -97,7 +98,7 @@ public class UserController {
 	 * @return
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/users/{id}/password", method=RequestMethod.PUT)
+	@RequestMapping(value="/{id}/password", method=RequestMethod.PUT)
 	public void update(
 			@PathVariable("id") String userId,
 			@RequestParam("current_password") String currentPassword,
@@ -130,7 +131,7 @@ public class UserController {
 	 * @return
 	 * @throws IOException 
 	 */
-	@RequestMapping(value="/users/{id}/coordinate", method=RequestMethod.PUT)
+	@RequestMapping(value="/{id}/coordinate", method=RequestMethod.PUT)
 	public void update(
 			@PathVariable("id") String userId,
 			@RequestParam("lat") Double lat,

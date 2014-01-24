@@ -1,5 +1,7 @@
 package com.example.util;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * エスケープ処理のUtilクラス
  *
@@ -8,8 +10,16 @@ package com.example.util;
 public final class EscapeUtil {
 	private EscapeUtil() {}
 
-	public static String escape(String str) {
-		// TODO: エスケープ処理
+	/**
+	 * 簡易的なSQLエスケープ処理
+	 *
+	 * @param str
+	 * @return
+	 */
+	public static String escapeSQL(String str) {
+		str = str.replaceAll("'", "''");
+		str = str.replaceAll("\"", "\"\"");
+		str = str.replaceAll("\\\\", StringUtils.EMPTY);
 		return str;
 	}
 }

@@ -30,7 +30,7 @@ public class User implements Serializable {
 
 	@JsonProperty("id")
 	@Id
-	@Column(name="user_id")
+	@Column(name="id")
 	private String id;
 
 	@JsonProperty("email")
