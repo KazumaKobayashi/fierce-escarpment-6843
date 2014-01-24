@@ -1,8 +1,8 @@
-package com.example;
+package com.example.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class AbstractTest {
+public class AbstractModelTest {
 	protected static ObjectMapper mapper;
 
 	static {
