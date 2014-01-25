@@ -12,11 +12,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.exception.GroupNotFoundException;
 import com.example.model.Group;
+
 /**
  * GroupServiceのテスト
  * 
  * @author KazumaKobayashi
+ * @author Kazuki Hasegawa
  * @see com.example.service.GroupService
  */
 @Transactional
@@ -30,17 +33,16 @@ public class GroupServiceTest {
 	private String name = GroupServiceTest.class.getName();
 	private Integer id;
 
-
 	@Before //このアノテーションは@Testのアノテーションが実行されるたびに実行される。（@Testよりも前に）
-	public void setUp(){
+	public void setup() {
 		//グループの作成
 		Group group = service.create(name);
-		id =group.getId();
+		id = group.getId();
 	}
 	
 	@Test
-	public void グループ情報を更新する() {
-		Group group = service.getGroup(id,name);
+	public void グループ情報を更新する() throws GroupNotFoundException {
+		Group group = service.getGroup(id);
 		assertThat(group.getGroupname(),is(name));
 		
 		//名前を変更する
@@ -48,7 +50,7 @@ public class GroupServiceTest {
 		service.update(id, groupname);
 
 		//再取得
-		group = service.getGroup(id,name);
-		assertThat(group.getGroupname(), is(name));
+		group = service.getGroup(id);
+		assertThat(group.getGroupname(), is(groupname));
 	}
 }

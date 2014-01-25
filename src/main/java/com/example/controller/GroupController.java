@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.exception.GroupNotFoundException;
 import com.example.jackson.Response;
 import com.example.model.Group;
 import com.example.service.GroupService;
@@ -18,8 +19,9 @@ import com.example.service.GroupService;
  * グループに関するコントローラ
  * 
  * @author Kazuma Kobayashi
+ * @author Kazuki Hasegawa
  */
-
+@RequestMapping("/groups")
 @Controller
 public class GroupController {
 	@Autowired
@@ -32,23 +34,24 @@ public class GroupController {
      * 
      * @return
      */
-	@RequestMapping(value="/groups/{id}/info",method = RequestMethod.GET)
+	@RequestMapping(value="/{id}/info",method = RequestMethod.GET)
 	public void group(@PathVariable("id") Integer groupId,HttpServletResponse response) throws IOException{
 		Response res = new Response();
-		Group group =groupService.getGroup(groupId,"KK");
-		if(group != null){
+		try {
+			Group group = groupService.getGroup(groupId);
 			//TODO:正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 			res.addObjects("group",group);
-		} else {
+		} catch (GroupNotFoundException e) {
 			//TODO:正しいエラーコードを設定のこと(Excepitonを対応したものを作成し割り当てる)
 			res.setStatusCode(-1);
+			res.addErrorMessage(e.toString());
 		}
 		//返却する値
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
-		
 	}
+
 	/**
 	 *グループ情報を更新
 	 *
@@ -58,7 +61,7 @@ public class GroupController {
 	 *@return 
 	 *@IOException
 	 */
-	@RequestMapping(value="/groups/{id}/info",method = RequestMethod.PUT)//処理が書かれているメソッドを作成してからアノテーションを書く
+	@RequestMapping(value="/{id}/info",method = RequestMethod.PUT)//処理が書かれているメソッドを作成してからアノテーションを書く
 	public void groupUpdate(
 			@PathVariable("id") Integer groupId,
 			@RequestParam("name") String groupname,
@@ -78,6 +81,7 @@ public class GroupController {
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
+
 	/**
 	 * 
 	 * @param groupId
@@ -85,10 +89,10 @@ public class GroupController {
 	 * @param response
 	 * @throws IOException
 	 */
-	@RequestMapping(value="/groups/create",method = RequestMethod.POST)
+	@RequestMapping(value="/create", method=RequestMethod.POST)
    	public void create(
    			@RequestParam("name") String groupname,
-   			HttpServletResponse response) throws IOException{
+   			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
 			Group group = groupService.create(groupname);

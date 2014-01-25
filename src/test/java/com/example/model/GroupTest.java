@@ -33,6 +33,6 @@ public class GroupTest extends AbstractModelTest {
 	JsonAssert
 		.with(json)
 		.assertThat("$.id", is(id))
-		.assertThat("$.groupname", is(name));
+		.assertThat("$.name", is(name));
 	}	
 }
