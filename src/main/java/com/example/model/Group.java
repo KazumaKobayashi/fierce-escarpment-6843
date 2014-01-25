@@ -14,8 +14,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * グループモデル
  * 
  * @author Kazuki Hasegawa
+ * @author Kazuma Kobayashi
  */
-@Table(name="group")
+@Table(name="groups")
 @Entity
 public class Group implements Serializable{
 	/**
@@ -26,9 +27,11 @@ public class Group implements Serializable{
 	@JsonProperty("id")
 	@Id
     @GeneratedValue
+    @Column(name="id")
     private Integer id;
-	
-	@Column(name="groupname", nullable=false)
+
+	@JsonProperty("name")
+	@Column(name="name", nullable=false)
 	private String groupname;
 	
 	public void setId(Integer id) {
