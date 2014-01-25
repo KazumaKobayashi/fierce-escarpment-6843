@@ -12,6 +12,7 @@ import static org.hamcrest.core.Is.is;
  * EscapeUtilのテスト
  *
  * @author Kazuki Hasegawa
+ * @see com.example.util.EscapeUtil
  */
 @RunWith(JUnit4.class)
 public class EscapeUtilTest {

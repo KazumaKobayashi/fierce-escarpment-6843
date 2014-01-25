@@ -14,6 +14,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
  * Responseのテスト
  *
  * @author Kazuki Hasegawa
+ * @see com.example.jackson.Response
  */
 @RunWith(JUnit4.class)
 public class ResponseTest extends AbstractModelTest {
