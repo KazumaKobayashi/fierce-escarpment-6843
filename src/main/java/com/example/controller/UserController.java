@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
+import com.example.model.LoginToken;
 import com.example.model.User;
 import com.example.service.CoordinateService;
+import com.example.service.LoginService;
 import com.example.service.UserService;
 
 /**
@@ -31,6 +34,8 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private CoordinateService coordinateService;
+	@Autowired
+	private LoginService loginService;
 
 	/**
 	 * ユーザの情報を取得
@@ -71,13 +76,21 @@ public class UserController {
 			@PathVariable("id") String userId,
 			@RequestParam("email") String email,
 			@RequestParam("name") String username,
+			@RequestParam("token") String token,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
-			User user = userService.update(userId, email, username);
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
-			res.addObjects("user", user);
+			LoginToken lToken = loginService.getLoginToken(userId);
+			if (StringUtils.equals(lToken.getToken(), token)) {
+				User user = userService.update(userId, email, username);
+				// TODO: 正しいステータスコードを設定のこと
+				res.setStatusCode(0);
+				res.addObjects("user", user);
+			} else {
+				// ログイントークンが不正だった場合
+				// TODO: 正しいエラーコードを設定のこと
+				res.setStatusCode(-1);
+			}
 		} catch (UserNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
@@ -103,12 +116,20 @@ public class UserController {
 			@PathVariable("id") String userId,
 			@RequestParam("current_password") String currentPassword,
 			@RequestParam("new_password") String newPassword,
+			@RequestParam("token") String token,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
-			userService.changePassword(userId, currentPassword, newPassword);
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			LoginToken lToken = loginService.getLoginToken(userId);
+			if (StringUtils.equals(lToken.getToken(), token)) {
+				userService.changePassword(userId, currentPassword, newPassword);
+				// TODO: 正しいステータスコードを設定のこと
+				res.setStatusCode(0);
+			} else {
+				// ログイントークンが不正だった場合
+				// TODO: 正しいエラーコードを設定のこと
+				res.setStatusCode(-1);
+			}
 		} catch (UserNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
@@ -136,14 +157,22 @@ public class UserController {
 			@PathVariable("id") String userId,
 			@RequestParam("lat") Double lat,
 			@RequestParam("lng") Double lng,
+			@RequestParam("token") String token,
 			HttpServletResponse response) throws IOException {
 		lat = lat == null ? 0 : lat;
 		lng = lng == null ? 0 : lng;
 		Response res = new Response();
 		try {
-			coordinateService.update(userId, lat, lng);
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			LoginToken lToken = loginService.getLoginToken(userId);
+			if (StringUtils.equals(lToken.getToken(), token)) {
+				coordinateService.update(userId, lat, lng);
+				// TODO: 正しいステータスコードを設定のこと
+				res.setStatusCode(0);
+			} else {
+				// ログイントークンが不正だった場合
+				// TODO: 正しいエラーコードを設定のこと
+				res.setStatusCode(-1);
+			}
 		} catch (UserNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
