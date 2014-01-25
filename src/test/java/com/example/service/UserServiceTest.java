@@ -136,7 +136,7 @@ public class UserServiceTest {
 	}
 
 	/**
-	 * 同じユーザIdで登録出来ないかのチェック
+	 * 同じユーザIdで登録を試みて例外が出るテスト
 	 *
 	 * @throws UserExistsException
 	 * @throws InvalidEmailException
@@ -148,7 +148,7 @@ public class UserServiceTest {
 	}
 
 	/**
-	 * 同じメールアドレスで登録出来ないかのチェック
+	 * 同じメールアドレスで登録を試みて例外が出るテスト
 	 *
 	 * @throws UserExistsException
 	 * @throws InvalidEmailException

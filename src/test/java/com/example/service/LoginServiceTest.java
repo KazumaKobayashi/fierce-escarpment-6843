@@ -78,7 +78,7 @@ public class LoginServiceTest {
 	}
 
 	/**
-	 * 一度、ログイントークンが発行されているユーザで期限内に発行しようとする
+	 * 一度、ログイントークンが発行されているユーザで期限内に発行を試みて例外が出るテスト
 	 *
 	 * @throws UserNotFoundException
 	 * @throws InvalidPasswordException
@@ -90,7 +90,7 @@ public class LoginServiceTest {
 	}
 
 	/**
-	 * 存在しないユーザでログイントークンの発行を試みる
+	 * 存在しないユーザでログイントークンを発行を試みて例外がでるテスト
 	 *
 	 * @throws UserNotFoundException
 	 * @throws InvalidPasswordException
@@ -102,7 +102,7 @@ public class LoginServiceTest {
 	}
 
 	/**
-	 * 不正なパスワードでログイントークンを発行を試みる
+	 * 不正なパスワードでログイントークンを発行を試みて例外が出るかのテスト
 	 *
 	 * @throws UserNotFoundException
 	 * @throws InvalidPasswordException

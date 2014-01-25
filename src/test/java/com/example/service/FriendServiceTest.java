@@ -111,7 +111,7 @@ public class FriendServiceTest {
 
 
 	/**
-	 * 2重登録をする
+	 * すでに申請しているが、もう一度申請を試みて例外が出るテスト
 	 *
 	 * @throws FriendRelationExistsException
 	 * @throws UserNotFoundException
@@ -122,7 +122,7 @@ public class FriendServiceTest {
 	}
 
 	/**
-	 * 存在しないユーザidでid1にフレンド申請をする
+	 * 存在しないユーザidでid1にフレンド申請を試みて例外が出るテスト
 	 *
 	 * @throws FriendRelationExistsException
 	 * @throws UserNotFoundException
@@ -135,7 +135,7 @@ public class FriendServiceTest {
 	}
 
 	/**
-	 * 存在しないユーザidのフレンド申請を許可する
+	 * 存在しないユーザidのフレンド申請を許可を試みて例外が出るテスト
 	 *
 	 * @throws FriendRelationNotFoundException
 	 */
@@ -147,7 +147,7 @@ public class FriendServiceTest {
 	}
 
 	/**
-	 * 存在しないユーザidのフレンド申請を却下する
+	 * 存在しないユーザidのフレンド申請を却下を試みて例外が出るテスト
 	 *
 	 * @throws FriendRelationNotFoundException
 	 */
@@ -159,7 +159,7 @@ public class FriendServiceTest {
 	}
 
 	/**
-	 * フレンド申請がされていないユーザのフレンド申請を許可する
+	 * フレンド申請がされていないユーザのフレンド申請を試みて例外が出るテスト
 	 * まず、カラムが存在しないので発生しないはず
 	 *
 	 * @throws FriendRelationNotFoundException
@@ -177,7 +177,7 @@ public class FriendServiceTest {
 	}
 
 	/**
-	 * フレンド申請がされていないユーザのフレンド申請を却下する
+	 * フレンド申請がされていないユーザのフレンド申請を却下を試みて例外が出るテスト
 	 * まず、存在しないので例外が発生するはず
 	 *
 	 * @throws UserExistsException
