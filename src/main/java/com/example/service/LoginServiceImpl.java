@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.LoginTokenExistsException;
+import com.example.exception.LoginTokenNotFoundException;
 import com.example.exception.UserNotFoundException;
 import com.example.model.LoginToken;
 import com.example.model.User;
@@ -31,6 +32,8 @@ import com.example.util.PasswordUtil;
 public class LoginServiceImpl implements LoginService {
 	@Autowired
 	private UserService userService;
+	@Autowired
+	private LogoutService logoutService;
 
 	@PersistenceContext
 	EntityManager em;
@@ -50,8 +53,19 @@ public class LoginServiceImpl implements LoginService {
 		// ログイントークンの存在チェク
 		LoginToken token = getLoginToken(userId);
 		if (token != null) {
-			// 存在する場合はエラー
-			throw new LoginTokenExistsException("Login token already exists. Token: " + token.getToken());
+			if (!DateUtil.isTimestampBeforeFewHours(token.getUpdatedAt(), 1)) {
+				// 存在する場合はエラー
+				throw new LoginTokenExistsException("Login token already exists. Token: " + token.getToken());
+			} else {
+				// 再発行可能時間になっていれば
+				try {
+					// ログイントークンを削除する
+					logoutService.deleteToken(userId, password);
+				} catch (LoginTokenNotFoundException e) {
+					// 起こりえるはずがないが一応キャッチする
+					e.printStackTrace();
+				}
+			}
 		}
 
 		// 現在時刻のタイムスタンプを取得
