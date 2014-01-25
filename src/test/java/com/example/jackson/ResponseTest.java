@@ -14,6 +14,7 @@ import static org.hamcrest.core.IsCollectionContaining.hasItems;
  * Responseのテスト
  *
  * @author Kazuki Hasegawa
+ * @see com.example.jackson.Response
  */
 @RunWith(JUnit4.class)
 public class ResponseTest extends AbstractModelTest {
@@ -30,7 +31,6 @@ public class ResponseTest extends AbstractModelTest {
 		res.addErrorMessage(err1);
 		res.addErrorMessage(err2);
 
-		System.out.println(res.getResponseJson());
 		JsonAssert
 			.with(res.getResponseJson())
 			.assertThat("$.code", is(0))

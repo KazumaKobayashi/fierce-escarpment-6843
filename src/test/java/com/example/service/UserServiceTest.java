@@ -134,4 +134,28 @@ public class UserServiceTest {
 		user = service.getUser(id);
 		assertThat(user.getPassword(), is(PasswordUtil.getPasswordHash(id, newPassword)));
 	}
+
+	/**
+	 * 同じユーザIdで登録出来ないかのチェック
+	 *
+	 * @throws UserExistsException
+	 * @throws InvalidEmailException
+	 * @throws EmailExistsException
+	 */
+	@Test(expected=UserExistsException.class)
+	public void 同じユーザIdで登録する() throws UserExistsException, InvalidEmailException, EmailExistsException {
+		service.create(id, "kazuma@kazuma.com", password);
+	}
+
+	/**
+	 * 同じメールアドレスで登録出来ないかのチェック
+	 *
+	 * @throws UserExistsException
+	 * @throws InvalidEmailException
+	 * @throws EmailExistsException
+	 */
+	@Test(expected=EmailExistsException.class)
+	public void 同じメールアドレスで登録する() throws UserExistsException, InvalidEmailException, EmailExistsException {
+		service.create("kazuma", email, password);
+	}
 }

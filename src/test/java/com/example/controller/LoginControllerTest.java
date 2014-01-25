@@ -14,6 +14,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
+/**
+ * LoginControllerのテスト
+ *
+ * @author Kazuki Hasegawa
+ * @see com.example.controller.LoginController
+ */
 @Transactional
 @TransactionConfiguration
 @RunWith(SpringJUnit4ClassRunner.class)

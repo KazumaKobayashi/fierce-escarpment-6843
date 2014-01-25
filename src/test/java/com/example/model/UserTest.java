@@ -21,6 +21,7 @@ import static org.hamcrest.core.Is.is;
 @RunWith(JUnit4.class)
 public class UserTest extends AbstractModelTest {
 	private String id = UserTest.class.getName();
+	private String email = "example@example.com";
 
 	/**
 	 * UserモデルのJSON文字列変換テスト
@@ -36,6 +37,7 @@ public class UserTest extends AbstractModelTest {
 		coord.setLat(lat);
 		User user = new User();
 		user.setId(id);
+		user.setEmail(email);
 		user.setUsername(id);
 		user.setCoord(coord);
 
@@ -43,6 +45,7 @@ public class UserTest extends AbstractModelTest {
 		JsonAssert
 			.with(json)
 			.assertThat("$.id", is(id))
+			.assertThat("$.email", is(email))
 			.assertThat("$.name", is(id))
 			.assertThat("$.lat", is(lat))
 			.assertThat("$.lng", is(lng));

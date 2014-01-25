@@ -74,6 +74,10 @@ public class UserServiceImpl implements UserService {
 			// 起こりえるわけがないけど念の為に
 			// TODO: ロガーの追加
 			e.printStackTrace();
+		} catch (UserNotFoundException e) {
+			// 起こりえるわけがないけど念の為に
+			// TODO: ロガーの追加
+			e.printStackTrace();
 		}
 		return user;
 	}

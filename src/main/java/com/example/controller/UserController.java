@@ -140,9 +140,16 @@ public class UserController {
 		lat = lat == null ? 0 : lat;
 		lng = lng == null ? 0 : lng;
 		Response res = new Response();
-		coordinateService.update(userId, lat, lng);
-		// TODO: 正しいステータスコードを設定のこと
-		res.setStatusCode(0);
+		try {
+			coordinateService.update(userId, lat, lng);
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+		} catch (UserNotFoundException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+			res.addErrorMessage(e.toString());
+		}
+
 		// 返却する値
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());

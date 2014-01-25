@@ -23,6 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * UserControllerのテスト
  *
  * @author Kazuki Hasegawa
+ * @see com.example.controller.UserController
  */
 @Transactional
 @TransactionConfiguration

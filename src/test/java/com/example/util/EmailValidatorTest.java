@@ -11,6 +11,7 @@ import static org.hamcrest.core.Is.is;
  * メールアドレスのチェックテスト
  *
  * @author Kazuki Hasegawa
+ * @see com.example.util.EmailValidator
  */
 @RunWith(JUnit4.class)
 public class EmailValidatorTest {
