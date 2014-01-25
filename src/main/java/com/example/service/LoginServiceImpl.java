@@ -63,6 +63,8 @@ public class LoginServiceImpl implements LoginService {
 		token.setToken(RandomStringUtils.randomAlphanumeric(10));
 		token.setCreatedAt(now);
 		token.setUpdatedAt(now);
+		// ユーザ側にも設定する
+		user.setToken(token);
 		em.persist(token);
 
 		return token;

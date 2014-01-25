@@ -3,25 +3,36 @@ package com.example.service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.CoordinateExistsException;
+import com.example.exception.UserNotFoundException;
 import com.example.model.Coordinate;
+import com.example.model.User;
 
 /**
  * CoordinateServiceの実装クラス
  *
  * @author Kazuki Hasegawa
+ * @see com.example.service.CoordinateService
  */
 @Service
 public class CoordinateServiceImpl implements CoordinateService {
+	@Autowired
+	private UserService userService;
+
 	@PersistenceContext
 	EntityManager em;
 
 	@Transactional
 	@Override
-	public Coordinate create(String userId, Double lat, Double lng) throws CoordinateExistsException {
+	public Coordinate create(String userId, Double lat, Double lng) throws UserNotFoundException, CoordinateExistsException {
+		User user = userService.getUser(userId);
+		if (user == null) {
+			throw new UserNotFoundException("User not found. Id: " + userId);
+		}
 		Coordinate coord = em.find(Coordinate.class, userId);
 		if (coord != null) {
 			throw new CoordinateExistsException("Coordinate already exists. Id: " + userId);
@@ -30,13 +41,16 @@ public class CoordinateServiceImpl implements CoordinateService {
 		coord.setUserId(userId);
 		coord.setLat(lat);
 		coord.setLng(lng);
+		coord.setUser(user);
+		// ユーザ側も設定
+		user.setCoord(coord);
 		em.persist(coord);
 		return coord;
 	}
 
 	@Override
 	@Transactional
-	public Coordinate update(String userId, Double lat, Double lng) {
+	public Coordinate update(String userId, Double lat, Double lng) throws UserNotFoundException {
 		Coordinate coord = em.find(Coordinate.class, userId);
 		if (coord != null) {
 			coord.setLat(lat);

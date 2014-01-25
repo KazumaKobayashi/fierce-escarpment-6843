@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.exception.CoordinateExistsException;
+import com.example.exception.UserNotFoundException;
 import com.example.model.Coordinate;
 
 /**
@@ -18,7 +19,7 @@ public interface CoordinateService {
 	 * @return
 	 * @throws CoordinateExistsException 
 	 */
-	public Coordinate create(String userId, Double lat, Double lng) throws CoordinateExistsException;
+	public Coordinate create(String userId, Double lat, Double lng) throws UserNotFoundException, CoordinateExistsException;
 
 	/**
 	 * 座標情報を更新
@@ -27,8 +28,9 @@ public interface CoordinateService {
 	 * @param lat
 	 * @param lng
 	 * @return
+	 * @throws UserNotFoundException
 	 */
-	public Coordinate update(String userId, Double lat, Double lng);
+	public Coordinate update(String userId, Double lat, Double lng) throws UserNotFoundException;
 
 	/**
 	 * 座標を取得
