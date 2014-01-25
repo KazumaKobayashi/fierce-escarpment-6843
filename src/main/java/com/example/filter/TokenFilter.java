@@ -31,18 +31,18 @@ public class TokenFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		// パラメータの取得
 		String token = (String) request.getParameter("token");
-		String userId = (String) request.getParameter("id");
 
-		if (StringUtils.isNotEmpty(token) && StringUtils.isNotEmpty(userId)) {
+		if (StringUtils.isNotEmpty(token)) {
 			// ログイントークンの存在確認
 			// 存在していない　又は　トークンが等しくなけれBad Request
-			LoginToken lToken = loginService.getLoginToken(userId);
+			LoginToken lToken = loginService.getLoginTokenByToken(token);
 			if (lToken == null || !StringUtils.equals(token, lToken.getToken())) {
 				((HttpServletResponse) response).sendError(HttpServletResponse.SC_BAD_REQUEST);
 			}
+
 			chain.doFilter(request, response);
 		} else {
-			// Tokenがない　又は　ユーザIdがない場合はBad Request
+			// Tokenがない場合はBad Request
 			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
