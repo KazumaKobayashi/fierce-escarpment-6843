@@ -39,5 +39,6 @@
 	<filter-mapping>
 		<filter-name>tokenFilter</filter-name>
 		<url-pattern>/users/*</url-pattern>
+		<url-pattern>/logout</url-pattern>
 	</filter-mapping>
 </web-app>
