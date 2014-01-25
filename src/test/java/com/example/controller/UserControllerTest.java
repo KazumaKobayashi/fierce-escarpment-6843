@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.jayway.jsonpath.JsonPath;
+
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,8 +35,11 @@ public class UserControllerTest extends AbstractControllerTest {
 	private String id = UserControllerTest.class.getName();
 	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
+	private String otherId = "kazuma";
+	private String otherEmail = "kazuma@kazuma.com";
 
 	private String token = StringUtils.EMPTY;
+	private String otherToken;
 
 	@Before
 	public void setup() throws Exception {
@@ -63,6 +67,26 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andReturn();
 		// ログイントークン取得
 		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+
+		// 他のユーザを登録する
+		mockMvc.perform(post("/register")
+						.param("id", otherId)
+						.param("email", otherEmail)
+						.param("password", password))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+		result = mockMvc.perform(post("/login")
+						.param("id", otherId)
+						.param("password", password))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			.andExpect(jsonPath("$.code").value(0))
+			.andReturn();
+
+		// トークン取得する
+		otherToken = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 	}
 
 	/**
@@ -129,5 +153,59 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0));
+	}
+
+	/**
+	 * ユーザ情報更新失敗テスト
+	 * 他のユーザが情報を更新出来るのはおかしい
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他のユーザが情報を更新する() throws Exception {
+		mockMvc.perform(put("/users/" + id + "/info")
+						.param("token", otherToken)
+						.param("email", email)
+						.param("name", id))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいエラーコードを設定すること
+			.andExpect(jsonPath("$.code").value(-1));
+	}
+
+	/**
+	 * パスワード変更失敗テスト
+	 * 他のユーザがパスワードを変更出来るのはおかしい
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他のユーザがパスワードを変更する() throws Exception {
+		mockMvc.perform(put("/users/" + id + "/password")
+						.param("token", otherToken)
+						.param("current_password", password)
+						.param("new_password", "kazuma"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいエラーコードを設定すること
+			.andExpect(jsonPath("$.code").value(-1));
+	}
+
+	/**
+	 * 座標情報更新失敗テスト
+	 * 他のユーザが変更出来るのはおかしい
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他のユーザが座標情報を更新する() throws Exception {
+		mockMvc.perform(put("/users/" + id + "/coordinate")
+						.param("token", otherToken)
+						.param("lat", "0.0")
+						.param("lng", "0.0"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいエラーコードを設定すること
+			.andExpect(jsonPath("$.code").value(-1));
 	}
 }
