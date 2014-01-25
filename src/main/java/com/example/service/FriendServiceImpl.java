@@ -80,6 +80,7 @@ public class FriendServiceImpl implements FriendService {
 		return relation;
 	}
 
+	@Transactional
 	@Override
 	public void forbid(String id1, String id2) throws FriendRelationNotFoundException {
 		FriendRelationPK pk = new FriendRelationPK();
@@ -95,6 +96,7 @@ public class FriendServiceImpl implements FriendService {
 		em.remove(relation);
 	}
 
+	@Transactional
 	@Override
 	public FriendRelation getFriendRelation(String id1, String id2) throws FriendRelationNotFoundException {
 		FriendRelationPK pk = new FriendRelationPK();
