@@ -31,7 +31,6 @@ public interface GroupService{
 	 * グループの情報を取得する
 	 *
 	 * @param id
-	 * @param name
 	 * @return
 	 * @throws GroupNotFoundException 
 	 */

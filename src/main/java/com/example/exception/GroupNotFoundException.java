@@ -2,7 +2,7 @@ package com.example.exception;
 
 /**
  * グループが見つからなかった場合の例外
- * @author G012C1205
+ * @author KazumaKobayashi
  *
  */
 public class GroupNotFoundException extends Exception{

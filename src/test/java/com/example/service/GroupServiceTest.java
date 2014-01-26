@@ -39,7 +39,7 @@ public class GroupServiceTest {
 		Group group = service.create(name);
 		id = group.getId();
 	}
-	
+
 	@Test
 	public void グループ情報を更新する() throws GroupNotFoundException {
 		Group group = service.getGroup(id);
@@ -52,5 +52,16 @@ public class GroupServiceTest {
 		//再取得
 		group = service.getGroup(id);
 		assertThat(group.getGroupname(), is(groupname));
+	}
+	/**
+	 * 存在しないグループを更新を試みて例外が出るテスト
+	 * 
+	 * @throws GroupNotFoundException
+	 */
+	@Test(expected=GroupNotFoundException.class)
+	public void 存在しないグループidを更新する() throws GroupNotFoundException{
+		String groupname = "Test";
+		service.getGroup(12345);
+		service.update(12345,groupname);
 	}
 }
