@@ -60,12 +60,52 @@ public class FriendServiceTest {
 	 * @throws FriendRelationNotFoundException
 	 */
 	@Test
-	public void フレンド関係を取得する() throws FriendRelationNotFoundException {
+	public void フレンド関係を取得する() {
 		FriendRelation relation = service.getFriendRelation(id1, id2);
 		assertThat(relation, is(notNullValue()));
 		assertThat(relation.getPk(), is(notNullValue()));
 		assertThat(relation.getPk().getId1(), is(id1));
 		assertThat(relation.getPk().getId2(), is(id2));
+	}
+
+	/**
+	 * idが逆でも取得出来ることをチェックする
+	 *
+	 * @throws FriendRelationNotFoundException
+	 */
+	@Test
+	public void 引数に渡すidを交換してフレンド関係を取得する() {
+		FriendRelation relation = service.getFriendRelation(id2, id1);
+		assertThat(relation, is(notNullValue()));
+		assertThat(relation.getPk(), is(notNullValue()));
+		assertThat(relation.getPk().getId1(), is(id1));
+		assertThat(relation.getPk().getId2(), is(id2));
+	}
+
+	/**
+	 * すでに申請されているユーザが申請するテスト
+	 * 挙動は、既存のリレーションを許可するようにする
+	 *
+	 * @throws FriendRelationExistsException
+	 * @throws UserNotFoundException
+	 * @throws FriendRelationNotFoundException
+	 */
+	@Test
+	public void id2のユーザがid1にフレンド申請をする() throws FriendRelationExistsException, UserNotFoundException, FriendRelationNotFoundException {
+		// 取得
+		FriendRelation relation = service.getFriendRelation(id1, id2);
+		assertThat(relation, is(notNullValue()));
+		assertThat(relation.getPk().getId1(), is(id1));
+		assertThat(relation.getPk().getId2(), is(id2));
+		assertThat(relation.isAllowed(), is(false));
+
+		// 申請する
+		// すでにid1 -> id2が存在しているため、id1 -> id2のフレンド申請が許可される動作になるはず
+		relation = service.create(id2, id1);
+		assertThat(relation, is(notNullValue()));
+		assertThat(relation.getPk().getId1(), is(id1));
+		assertThat(relation.getPk().getId2(), is(id2));
+		assertThat(relation.isAllowed(), is(true));
 	}
 
 	/**
