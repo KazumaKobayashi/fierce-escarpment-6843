@@ -155,6 +155,38 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.code").value(0));
 	}
 
+	@Test
+	public void 距離を算出する() throws Exception {
+		// 座標更新（東京工科大学）
+		mockMvc.perform(put("/users/" + id + "/coordinate")
+						.param("token", token)
+						.param("lat", "35.626303")
+						.param("lng", "139.339350"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+		// 座標更新（八王子みなみ野駅）
+		mockMvc.perform(put("/users/" + otherId + "/coordinate")
+						.param("token", otherToken)
+						.param("lat", "35.631364")
+						.param("lng", "139.330975"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// otherIdのユーザとの距離を求める距離取得
+		mockMvc.perform(get("/users/" + otherId + "/coordinate/diff")
+						.param("token", token))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.meter").value(942))
+			.andExpect(jsonPath("$.kilometer").value(0.942));
+	}
+
 	/**
 	 * ユーザ情報更新失敗テスト
 	 * 他のユーザが情報を更新出来るのはおかしい

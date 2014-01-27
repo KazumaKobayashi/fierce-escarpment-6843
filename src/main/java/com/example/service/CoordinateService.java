@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.exception.CoordinateExistsException;
+import com.example.exception.CoordinateNotFoundException;
 import com.example.exception.UserNotFoundException;
 import com.example.model.Coordinate;
 
@@ -39,4 +40,12 @@ public interface CoordinateService {
 	 * @return
 	 */
 	public Coordinate getCoordinate(String userId);
+
+	/**
+	 * 2点間の距離をメートルで求める
+	 *
+	 * @return
+	 * @throws CoordinateNotFoundException
+	 */
+	public double getDistanceBetween(String userId1, String userId2) throws CoordinateNotFoundException;
 }

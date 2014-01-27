@@ -10,6 +10,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.CoordinateExistsException;
+import com.example.exception.CoordinateNotFoundException;
 import com.example.exception.EmailExistsException;
 import com.example.exception.InvalidEmailException;
 import com.example.exception.UserExistsException;
@@ -80,6 +81,30 @@ public class CoordinateServiceTest {
 	}
 
 	/**
+	 * ２つのユーザ間のおおよその距離算出テスト
+	 *
+	 * @throws UserExistsException
+	 * @throws InvalidEmailException
+	 * @throws EmailExistsException
+	 * @throws UserNotFoundException
+	 * @throws CoordinateNotFoundException 
+	 */
+	@Test
+	public void 座標間の距離を求める() throws UserExistsException, InvalidEmailException, EmailExistsException, UserNotFoundException, CoordinateNotFoundException {
+		String id1 = "kazuma1", email1 = "kazuma1@kazuma.com";
+		String id2 = "kazuma2", email2 = "kazuma2@kazuma.com";
+
+		userService.create(id1, email1, password);
+		userService.create(id2, email2, password);
+
+		double lat1 = 35.626303, lng1 = 139.339350;
+		double lat2 = 35.631364, lng2 = 139.330975;
+		service.update(id1, lat1, lng1);
+		service.update(id2, lat2, lng2);
+		assertThat(Math.floor(service.getDistanceBetween(id1, id2)), is(942.0));
+	}
+
+	/**
 	 * 座標情報の2重で作成出来るか試みる
 	 *
 	 * @throws UserNotFoundException
@@ -109,5 +134,26 @@ public class CoordinateServiceTest {
 	@Test(expected=UserNotFoundException.class)
 	public void 存在しないユーザIdの座標情報を更新する() throws UserNotFoundException {
 		service.update("kazuma", 0.0, 0.0);
+	}
+
+	/**
+	 * ユーザ2の方を作成せずに距離を算出するテスト
+	 *
+	 * @throws CoordinateNotFoundException
+	 * @throws UserNotFoundException
+	 * @throws UserExistsException
+	 * @throws InvalidEmailException
+	 * @throws EmailExistsException
+	 */
+	@Test(expected=CoordinateNotFoundException.class)
+	public void 存在しないユーザ間の距離を求める() throws CoordinateNotFoundException, UserNotFoundException, UserExistsException, InvalidEmailException, EmailExistsException {
+		String id1 = "kazuma1", email1 = "kazuma1@kazuma.com";
+		String id2 = "kazuma2";
+
+		userService.create(id1, email1, password);
+
+		double lat1 = 35.626303, lng1 = 139.339350;
+		service.update(id1, lat1, lng1);
+		assertThat(Math.floor(service.getDistanceBetween(id1, id2)), is(942.0));
 	}
 }
