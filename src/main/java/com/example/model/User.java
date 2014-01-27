@@ -2,13 +2,10 @@ package com.example.model;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -64,22 +61,6 @@ public class User implements Serializable {
 	@OneToOne(mappedBy="user")
 	private LoginToken token;
 
-	/**
-	 * フレンド申請を出しているリスト
-	 */
-	@JsonIgnore
-	@OneToMany
-	@JoinColumn(name="id", insertable=false, updatable=false)
-	private List<FriendRelation> relatingList;
-
-	/**
-	 * フレンド申請が出されているリスト
-	 */
-	@JsonIgnore
-	@OneToMany
-	@JoinColumn(name="id", insertable=false, updatable=false)
-	private List<FriendRelation> relatedList;
-
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -112,14 +93,6 @@ public class User implements Serializable {
 		this.token = token;
 	}
 
-	public void setRelatingList(List<FriendRelation> relatingList) {
-		this.relatingList = relatingList;
-	}
-
-	public void setRelatedList(List<FriendRelation> relatedList) {
-		this.relatedList = relatedList;
-	}
-
 	public String getId() {
 		return id;
 	}
@@ -150,13 +123,5 @@ public class User implements Serializable {
 
 	public LoginToken getToken() {
 		return token;
-	}
-
-	public List<FriendRelation> getRelatingList() {
-		return relatingList;
-	}
-
-	public List<FriendRelation> getRelatedList() {
-		return relatedList;
 	}
 }

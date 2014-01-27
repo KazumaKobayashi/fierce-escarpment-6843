@@ -40,9 +40,20 @@ public class FriendServiceImpl implements FriendService {
 
 		// プライマリキーの作成
 		FriendRelationPK pk = new FriendRelationPK();
+		// 存在確認(申請先がすでに出しているか）
 		pk.setId1(id2);
 		pk.setId2(id1);
 		FriendRelation relation = em.find(FriendRelation.class, pk);
+		if (relation != null) {
+			try {
+				// 更新する
+				return allow(id2, id1);
+			} catch (FriendRelationNotFoundException e) {
+				// 起こりえるはずがないが一応
+				// TODO: ロガー
+				e.printStackTrace();
+			}
+		}
 		// 存在確認
 		pk.setId1(id1);
 		pk.setId2(id2);
@@ -69,7 +80,14 @@ public class FriendServiceImpl implements FriendService {
 		FriendRelation relation =  em.find(FriendRelation.class, pk);
 		// 存在確認
 		if (relation == null) {
-			throw new FriendRelationNotFoundException("FriendRelation not found.");
+			// Idを交換して探してみる
+			pk.setId1(id2);
+			pk.setId2(id1);
+			relation = em.find(FriendRelation.class, pk);
+			if (relation == null) {
+				// それでもないなら例外
+				throw new FriendRelationNotFoundException("FriendRelation not found.");
+			}
 		}
 
 		// 許可
@@ -89,7 +107,14 @@ public class FriendServiceImpl implements FriendService {
 		FriendRelation relation =  em.find(FriendRelation.class, pk);
 		// 存在確認
 		if (relation == null) {
-			throw new FriendRelationNotFoundException("FriendRelation not found.");
+			// Idを交換して探してみる
+			pk.setId1(id2);
+			pk.setId2(id1);
+			relation = em.find(FriendRelation.class, pk);
+			if (relation == null) {
+				// それでもないなら例外
+				throw new FriendRelationNotFoundException("FriendRelation not found.");
+			}
 		}
 
 		// 削除
@@ -98,11 +123,23 @@ public class FriendServiceImpl implements FriendService {
 
 	@Transactional
 	@Override
-	public FriendRelation getFriendRelation(String id1, String id2) throws FriendRelationNotFoundException {
+	public FriendRelation getFriendRelation(String id1, String id2) {
 		FriendRelationPK pk = new FriendRelationPK();
 		pk.setId1(id1);
 		pk.setId2(id2);
-		return em.find(FriendRelation.class, pk);
+		FriendRelation relation =  em.find(FriendRelation.class, pk);
+		if (relation != null) {
+			return relation;
+		}
+		// idを逆にして取得してみる
+		pk.setId1(id2);
+		pk.setId2(id1);
+		relation = em.find(FriendRelation.class, pk);
+		// 実質にrelationを返せば良いが明示的に記述しておく
+		if (relation != null) {
+			return relation;
+		}
+		return null;
 	}
 
 }

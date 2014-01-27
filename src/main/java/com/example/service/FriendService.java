@@ -45,5 +45,5 @@ public interface FriendService {
 	 * @return
 	 * @throws FriendRelationNotFoundException
 	 */
-	public FriendRelation getFriendRelation(String id1, String id2) throws FriendRelationNotFoundException;
+	public FriendRelation getFriendRelation(String id1, String id2);
 }
