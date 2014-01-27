@@ -185,6 +185,15 @@ public class UserController {
 		response.getWriter().print(res.getResponseJson());
 	}
 
+	/**
+	 * 距離を算出してくれるURL
+	 * メートルとキロメートルで返してくれる
+	 *
+	 * @param userId
+	 * @param token
+	 * @param response
+	 * @throws IOException
+	 */
 	@RequestMapping(value="/{id}/coordinate/diff", method=RequestMethod.GET)
 	public void getDistanceBetween(
 			@PathVariable("id") String userId,
