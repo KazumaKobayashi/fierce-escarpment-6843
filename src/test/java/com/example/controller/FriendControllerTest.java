@@ -89,6 +89,11 @@ public class FriendControllerTest extends AbstractControllerTest {
 		otherToken = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 	}
 
+	/**
+	 * フレンド申請テスト
+	 *
+	 * @throws Exception
+	 */
 	@Test
 	public void フレンドを申請する() throws Exception {
 		mockMvc.perform(post("/friends/" + otherId + "/add")
@@ -99,8 +104,38 @@ public class FriendControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.code").value(0));
 	}
 
+	/**
+	 * フレンド申請許可テスト
+	 *
+	 * @throws Exception
+	 */
 	@Test
 	public void フレンド申請を許可する() throws Exception {
+		// フレンドを申請する
+		mockMvc.perform(post("/friends/" + otherId + "/add")
+						.param("token", token))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請を許可する
+		mockMvc.perform(put("/friends/" + id + "/approve")
+						.param("token", otherToken))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+	}
+
+	/**
+	 * フレンド申請自身で許可テスト
+	 * 失敗しなければならない
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void フレンド申請を自身許可する() throws Exception {
 		// フレンドを申請する
 		mockMvc.perform(post("/friends/" + otherId + "/add")
 						.param("token", token))
@@ -115,11 +150,40 @@ public class FriendControllerTest extends AbstractControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(-1));
+	}
+
+	/**
+	 * フレンド申請却下テスト
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void フレンド申請を却下する() throws Exception {
+		// フレンドを申請する
+		mockMvc.perform(post("/friends/" + otherId + "/add")
+						.param("token", token))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請を却下する
+		mockMvc.perform(delete("/friends/" + id + "/unapprove")
+						.param("token", otherToken))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0));
 	}
 
+	/**
+	 * フレンド申請自身で却下テスト
+	 *
+	 * @throws Exception
+	 */
 	@Test
-	public void フレンド申請を却下する() throws Exception {
+	public void フレンド申請を自身で却下する() throws Exception {
 		// フレンドを申請する
 		mockMvc.perform(post("/friends/" + otherId + "/add")
 						.param("token", token))
