@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.CoordinateExistsException;
+import com.example.exception.CoordinateNotFoundException;
 import com.example.exception.UserNotFoundException;
 import com.example.model.Coordinate;
 import com.example.model.User;
+import com.example.util.MapUtil;
 
 /**
  * CoordinateServiceの実装クラス
@@ -72,5 +74,15 @@ public class CoordinateServiceImpl implements CoordinateService {
 	@Override
 	public Coordinate getCoordinate(String userId) {
 		return em.find(Coordinate.class, userId);
+	}
+
+	@Override
+	public double getDistanceBetween(String userId1, String userId2) throws CoordinateNotFoundException {
+		Coordinate coord1 = getCoordinate(userId1);
+		Coordinate coord2 = getCoordinate(userId2);
+		if (coord1 == null || coord2 == null) {
+			throw new CoordinateNotFoundException("座標情報が見つかりません。");
+		}
+		return MapUtil.getDistanceBetween(coord1.getLat(), coord1.getLng(), coord2.getLat(), coord2.getLng(), MapUtil.EllipsoidBody.GRS80);
 	}
 }
