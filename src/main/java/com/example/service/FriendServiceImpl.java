@@ -80,7 +80,14 @@ public class FriendServiceImpl implements FriendService {
 		FriendRelation relation =  em.find(FriendRelation.class, pk);
 		// 存在確認
 		if (relation == null) {
-			throw new FriendRelationNotFoundException("FriendRelation not found.");
+			// Idを交換して探してみる
+			pk.setId1(id2);
+			pk.setId2(id1);
+			relation = em.find(FriendRelation.class, pk);
+			if (relation == null) {
+				// それでもないなら例外
+				throw new FriendRelationNotFoundException("FriendRelation not found.");
+			}
 		}
 
 		// 許可
@@ -100,7 +107,14 @@ public class FriendServiceImpl implements FriendService {
 		FriendRelation relation =  em.find(FriendRelation.class, pk);
 		// 存在確認
 		if (relation == null) {
-			throw new FriendRelationNotFoundException("FriendRelation not found.");
+			// Idを交換して探してみる
+			pk.setId1(id2);
+			pk.setId2(id1);
+			relation = em.find(FriendRelation.class, pk);
+			if (relation == null) {
+				// それでもないなら例外
+				throw new FriendRelationNotFoundException("FriendRelation not found.");
+			}
 		}
 
 		// 削除

@@ -130,6 +130,27 @@ public class FriendServiceTest {
 	}
 
 	/**
+	 * idが逆でも許可出来ることをチェックする
+	 *
+	 * @throws FriendRelationNotFoundException
+	 */
+	@Test
+	public void 引数に渡すidを交換してフレンド申請を許可する() throws FriendRelationNotFoundException {
+		// 取得
+				FriendRelation relation = service.getFriendRelation(id1, id2);
+				assertThat(relation.getPk().getId1(), is(id1));
+				assertThat(relation.getPk().getId2(), is(id2));
+
+				// フレンド申請を許可
+				service.allow(id2, id1);
+
+				// 再取得
+				relation = service.getFriendRelation(id1, id2);
+				assertThat(relation.getPk().getId1(), is(id1));
+				assertThat(relation.getPk().getId2(), is(id2));
+	}
+
+	/**
 	 * フレンド申請を断る
 	 *
 	 * @throws FriendRelationNotFoundException
@@ -149,6 +170,25 @@ public class FriendServiceTest {
 		assertThat(relation, is(nullValue()));
 	}
 
+	/**
+	 * idが逆でも却下出来ることをチェックする
+	 *
+	 * @throws FriendRelationNotFoundException
+	 */
+	@Test
+	public void 引数に渡すidを交換してフレンド申請を却下する() throws FriendRelationNotFoundException {
+		// 取得
+		FriendRelation relation = service.getFriendRelation(id1, id2);
+		assertThat(relation.getPk().getId1(), is(id1));
+		assertThat(relation.getPk().getId2(), is(id2));
+
+		// フレンド申請を削除する
+		service.forbid(id2, id1);
+
+		// 再取得
+		relation = service.getFriendRelation(id1, id2);
+		assertThat(relation, is(nullValue()));
+	}
 
 	/**
 	 * すでに申請しているが、もう一度申請を試みて例外が出るテスト
