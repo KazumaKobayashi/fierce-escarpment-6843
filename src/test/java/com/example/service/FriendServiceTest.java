@@ -1,5 +1,7 @@
 package com.example.service;
 
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +18,7 @@ import com.example.exception.InvalidEmailException;
 import com.example.exception.UserExistsException;
 import com.example.exception.UserNotFoundException;
 import com.example.model.FriendRelation;
+import com.example.model.User;
 
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -137,17 +140,17 @@ public class FriendServiceTest {
 	@Test
 	public void 引数に渡すidを交換してフレンド申請を許可する() throws FriendRelationNotFoundException {
 		// 取得
-				FriendRelation relation = service.getFriendRelation(id1, id2);
-				assertThat(relation.getPk().getId1(), is(id1));
-				assertThat(relation.getPk().getId2(), is(id2));
+		FriendRelation relation = service.getFriendRelation(id1, id2);
+		assertThat(relation.getPk().getId1(), is(id1));
+		assertThat(relation.getPk().getId2(), is(id2));
 
-				// フレンド申請を許可
-				service.allow(id2, id1);
+		// フレンド申請を許可
+		service.allow(id2, id1);
 
-				// 再取得
-				relation = service.getFriendRelation(id1, id2);
-				assertThat(relation.getPk().getId1(), is(id1));
-				assertThat(relation.getPk().getId2(), is(id2));
+		// 再取得
+		relation = service.getFriendRelation(id1, id2);
+		assertThat(relation.getPk().getId1(), is(id1));
+		assertThat(relation.getPk().getId2(), is(id2));
 	}
 
 	/**
@@ -188,6 +191,46 @@ public class FriendServiceTest {
 		// 再取得
 		relation = service.getFriendRelation(id1, id2);
 		assertThat(relation, is(nullValue()));
+	}
+
+	/**
+	 * フレンド申請中ユーザ一覧取得テスト
+	 */
+	@Test
+	public void フレンド申請中のユーザリスト取得する() {
+		List<User> users = service.getRelatingList(id1);
+		assertThat(users.size(), is(1));
+		assertThat(users.get(0).getId(), is(id2));
+	}
+
+	/**
+	 * フレンド申請待ちユーザ一覧取得テスト
+	 */
+	@Test
+	public void フレンド申請をしてくれているのユーザリスト取得する() {
+		List<User> users = service.getRelatedList(id2);
+		assertThat(users.size(), is(1));
+		assertThat(users.get(0).getId(), is(id1));
+	}
+
+	/**
+	 * フレンド一覧を取得する
+	 *
+	 * @throws FriendRelationNotFoundException
+	 */
+	@Test
+	public void フレンド一覧を取得する() throws FriendRelationNotFoundException {
+		// フレンド申請を許可
+		service.allow(id2, id1);
+
+		// フレンドを取得する
+		List<User> users = service.getFriendList(id1);
+		assertThat(users.size(), is(1));
+		assertThat(users.get(0).getId(), is(id2));
+		// id2からのも取得してみる
+		users = service.getFriendList(id2);
+		assertThat(users.size(), is(1));
+		assertThat(users.get(0).getId(), is(id1));
 	}
 
 	/**
