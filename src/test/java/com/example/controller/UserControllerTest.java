@@ -101,7 +101,60 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.user.id").value(id))
+			.andExpect(jsonPath("$.user.email").value(email))
+			.andExpect(jsonPath("$.user.name").value(id));
+	}
+
+	/**
+	 * 他ユーザ情報取得テスト（友達じゃない版）
+	 * 友達でないので失敗しないとおかしい
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他のユーザが情報を取得する() throws Exception {
+		mockMvc.perform(get("/users/" + id + "/info")
+						.param("token", otherToken))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(-1));
+	}
+
+	/**
+	 * 他ユーザ情報取得テスト（友達版）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 友達が情報を取得する() throws Exception {
+		// フレンドを申請する
+		mockMvc.perform(post("/friends/" + otherId + "/add")
+						.param("token", token))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請を許可する
+		mockMvc.perform(put("/friends/" + id + "/approve")
+						.param("token", otherToken))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		mockMvc.perform(get("/users/" + id + "/info")
+						.param("token", otherToken))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.user.id").value(id))
+			.andExpect(jsonPath("$.user.email").value(email))
+			.andExpect(jsonPath("$.user.name").value(id));
 	}
 
 	/**

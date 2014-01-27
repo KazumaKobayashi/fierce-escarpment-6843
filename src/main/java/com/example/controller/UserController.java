@@ -19,6 +19,7 @@ import com.example.jackson.Response;
 import com.example.model.LoginToken;
 import com.example.model.User;
 import com.example.service.CoordinateService;
+import com.example.service.FriendService;
 import com.example.service.LoginService;
 import com.example.service.UserService;
 
@@ -37,6 +38,8 @@ public class UserController {
 	private CoordinateService coordinateService;
 	@Autowired
 	private LoginService loginService;
+	@Autowired
+	private FriendService friendService;
 
 	/**
 	 * ユーザの情報を取得
@@ -47,13 +50,31 @@ public class UserController {
 	 * @throws IOException 
 	 */
 	@RequestMapping(value="/{id}/info", method=RequestMethod.GET)
-	public void user(@PathVariable("id") String userId, HttpServletResponse response) throws IOException {
+	public void user(
+			@PathVariable("id") String userId,
+			@RequestParam("token") String token,
+			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		User user = userService.getUser(userId);
 		if (user != null) {
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
-			res.addObjects("user", user);
+			LoginToken lToken = loginService.getLoginTokenByToken(token);
+			// TODO: ここらへんをどうにかしてまとめたい
+			if (StringUtils.equals(userId, lToken.getUserId())) {
+				// ログイントークンが自分自身ならば友達関係を追加
+				res.addObjects("relating_users", friendService.getRelatingList(userId));
+				res.addObjects("related_users", friendService.getRelatedList(userId));
+				res.addObjects("friend_users", friendService.getFriendList(userId));
+				// TODO: 正しいステータスコードを設定のこと
+				res.setStatusCode(0);
+				res.addObjects("user", user);
+			} else if (friendService.isFriend(userId, lToken.getUserId())) {
+				// TODO: 正しいステータスコードを設定のこと
+				res.setStatusCode(0);
+				res.addObjects("user", user);
+			} else {
+				// TODO: 正しいエラーコードを設定のこと(FriendRelationNotFoundExceptionと同じ)
+				res.setStatusCode(-1);
+			}
 		} else {
 			// TODO: 正しいエラーコードを設定のこと(UserNotFoundExceptionと同じ)
 			res.setStatusCode(-1);

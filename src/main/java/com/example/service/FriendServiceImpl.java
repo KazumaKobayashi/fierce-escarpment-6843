@@ -193,4 +193,11 @@ public class FriendServiceImpl implements FriendService {
 		}
 		return users;
 	}
+
+	@Transactional
+	@Override
+	public boolean isFriend(String id1, String id2) {
+		FriendRelation relation = getFriendRelation(id1, id2);
+		return relation != null && relation.isAllowed();
+	}
 }

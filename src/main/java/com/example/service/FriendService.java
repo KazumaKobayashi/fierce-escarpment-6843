@@ -73,4 +73,13 @@ public interface FriendService {
 	 * @return
 	 */
 	public List<User> getFriendList(String id);
+
+	/**
+	 * ２ユーザがフレンドかどうかを返す
+	 *
+	 * @param id1
+	 * @param id2
+	 * @return
+	 */
+	public boolean isFriend(String id1, String id2);
 }
