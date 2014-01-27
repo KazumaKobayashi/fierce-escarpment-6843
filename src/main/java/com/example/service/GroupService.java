@@ -16,7 +16,7 @@ public interface GroupService{
 	 * @param name
 	 * @return
 	 */
-	public Group create(String name);
+	public Group create(String userId,String name);
 	
 	/**
 	 *グループの情報を更新する

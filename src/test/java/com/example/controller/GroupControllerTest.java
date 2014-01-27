@@ -28,6 +28,7 @@ import com.jayway.jsonpath.JsonPath;
 public class GroupControllerTest extends AbstractControllerTest {
 	private Integer id;
 	private String name = "Test";
+	private String owner = "owner";
 	
 	@Before
 	public void setup() throws Exception {
@@ -35,12 +36,14 @@ public class GroupControllerTest extends AbstractControllerTest {
 		//グループ登録
 		MvcResult result
 			= mockMvc.perform(post("/groups/create")
-							.param("name", name))
+							.param("name", name)
+							.param("owner",owner))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json"))
 				//TODO: Successコードと比較
 				.andExpect(jsonPath("$.code").value(0))
 				.andExpect(jsonPath("$.group.name").value(name))
+				.andExpect(jsonPath("$.group.owner").value(owner))
 				.andReturn();
 
 		id = JsonPath.read(result.getResponse().getContentAsString(), "$.group.id");

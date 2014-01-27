@@ -30,13 +30,14 @@ public class GroupServiceTest {
 	@Autowired
 	private GroupService service;
 
-	private String name = GroupServiceTest.class.getName();
+	private String name  = GroupServiceTest.class.getName();
+	private String owner = "Test";
 	private Integer id;
 
 	@Before //このアノテーションは@Testのアノテーションが実行されるたびに実行される。（@Testよりも前に）
 	public void setup() {
 		//グループの作成
-		Group group = service.create(name);
+		Group group = service.create(owner,name);
 		id = group.getId();
 	}
 
