@@ -84,11 +84,13 @@ public class LoginServiceImpl implements LoginService {
 		return token;
 	}
 
+	@Transactional
 	@Override
 	public LoginToken getLoginToken(String userId) {
 		return em.find(LoginToken.class, userId);
 	}
 
+	@Transactional
 	@Override
 	public LoginToken getLoginTokenByToken(String token) {
 		TypedQuery<LoginToken> query = em.createQuery("select lt from LoginToken lt where lt.token = :token", LoginToken.class);

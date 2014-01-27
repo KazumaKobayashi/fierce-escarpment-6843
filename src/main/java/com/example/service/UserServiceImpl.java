@@ -107,6 +107,7 @@ public class UserServiceImpl implements UserService {
 		return em.find(User.class, userId);
 	}
 
+	@Transactional
 	@Override
 	public User changePassword(String userId, String currentPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException {
 		User user = em.find(User.class, userId);
@@ -124,6 +125,7 @@ public class UserServiceImpl implements UserService {
 		return user;
 	}
 
+	@Transactional
 	@Override
 	public User getUserByEmail(String email) {
 		TypedQuery<User> query = em.createQuery("select u from User u where u.email = :email", User.class);
