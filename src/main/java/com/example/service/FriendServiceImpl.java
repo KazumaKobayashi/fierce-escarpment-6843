@@ -1,7 +1,11 @@
 package com.example.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +16,7 @@ import com.example.exception.FriendRelationNotFoundException;
 import com.example.exception.UserNotFoundException;
 import com.example.model.FriendRelation;
 import com.example.model.FriendRelationPK;
+import com.example.model.User;
 
 /**
  * FriendRelationServiceの実装クラス
@@ -72,6 +77,7 @@ public class FriendServiceImpl implements FriendService {
 		return relation;
 	}
 
+	@Transactional
 	@Override
 	public FriendRelation allow(String id1, String id2) throws FriendRelationNotFoundException {
 		FriendRelationPK pk = new FriendRelationPK();
@@ -142,4 +148,56 @@ public class FriendServiceImpl implements FriendService {
 		return null;
 	}
 
+	@Transactional
+	@Override
+	public List<User> getRelatingList(String id) {
+		TypedQuery<FriendRelation> query = em.createQuery("select fr from FriendRelation fr where fr.pk.id1 = :id and fr.allowed = false", FriendRelation.class);
+		query.setParameter("id", id);
+		query.setMaxResults(10);
+		List<User> users = new ArrayList<User>();
+		// 無理やり取ってくる
+		for (FriendRelation fr : query.getResultList()) {
+			users.add(userService.getUser(fr.getPk().getId2()));
+		}
+		return users;
+	}
+
+	@Transactional
+	@Override
+	public List<User> getRelatedList(String id) {
+		TypedQuery<FriendRelation> query = em.createQuery("select fr from FriendRelation fr where fr.pk.id2 = :id and fr.allowed = false", FriendRelation.class);
+		query.setParameter("id", id);
+		query.setMaxResults(10);
+		List<User> users = new ArrayList<User>();
+		// 無理やり取ってくる
+		for (FriendRelation fr : query.getResultList()) {
+			users.add(userService.getUser(fr.getPk().getId1()));
+		}
+		return users;
+	}
+
+	@Transactional
+	@Override
+	public List<User> getFriendList(String id) {
+		// かなり無理矢理なので遅いはず
+		TypedQuery<FriendRelation> query = em.createQuery("select fr from FriendRelation fr where fr.pk.id1 = :id and fr.allowed = true", FriendRelation.class);
+		query.setParameter("id", id);
+		List<User> users = new ArrayList<User>();
+		for (FriendRelation fr : query.getResultList()) {
+			users.add(userService.getUser(fr.getPk().getId2()));
+		}
+		query = em.createQuery("select fr from FriendRelation fr where fr.pk.id2 = :id and fr.allowed = true", FriendRelation.class);
+		query.setParameter("id", id);
+		for (FriendRelation fr : query.getResultList()) {
+			users.add(userService.getUser(fr.getPk().getId1()));
+		}
+		return users;
+	}
+
+	@Transactional
+	@Override
+	public boolean isFriend(String id1, String id2) {
+		FriendRelation relation = getFriendRelation(id1, id2);
+		return relation != null && relation.isAllowed();
+	}
 }

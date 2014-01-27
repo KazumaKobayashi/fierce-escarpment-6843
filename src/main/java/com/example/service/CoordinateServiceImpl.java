@@ -50,8 +50,8 @@ public class CoordinateServiceImpl implements CoordinateService {
 		return coord;
 	}
 
-	@Override
 	@Transactional
+	@Override
 	public Coordinate update(String userId, Double lat, Double lng) throws UserNotFoundException {
 		Coordinate coord = em.find(Coordinate.class, userId);
 		if (coord != null) {
@@ -71,11 +71,13 @@ public class CoordinateServiceImpl implements CoordinateService {
 		return coord;
 	}
 
+	@Transactional
 	@Override
 	public Coordinate getCoordinate(String userId) {
 		return em.find(Coordinate.class, userId);
 	}
 
+	@Transactional
 	@Override
 	public double getDistanceBetween(String userId1, String userId2) throws CoordinateNotFoundException {
 		Coordinate coord1 = getCoordinate(userId1);
