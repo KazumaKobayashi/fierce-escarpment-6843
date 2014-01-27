@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.example.exception.CoordinateNotFoundException;
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
@@ -174,6 +175,29 @@ public class UserController {
 				res.setStatusCode(-1);
 			}
 		} catch (UserNotFoundException e) {
+			// TODO: 正しいエラーコードを設定のこと
+			res.setStatusCode(-1);
+			res.addErrorMessage(e.toString());
+		}
+
+		// 返却する値
+		response.setContentType("application/json");
+		response.getWriter().print(res.getResponseJson());
+	}
+
+	@RequestMapping(value="/{id}/coordinate/diff", method=RequestMethod.GET)
+	public void getDistanceBetween(
+			@PathVariable("id") String userId,
+			@RequestParam("token") String token,
+			HttpServletResponse response) throws IOException {
+		Response res = new Response();
+		try {
+			LoginToken lToken = loginService.getLoginTokenByToken(token);
+			double meter = Math.floor(coordinateService.getDistanceBetween(userId, lToken.getUserId()));
+			res.setStatusCode(0);
+			res.addObjects("meter", Math.round(meter));
+			res.addObjects("kilometer", meter / 1000.0);
+		} catch (CoordinateNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 			res.addErrorMessage(e.toString());
