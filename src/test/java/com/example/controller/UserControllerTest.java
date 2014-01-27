@@ -39,7 +39,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	private String otherEmail = "kazuma@kazuma.com";
 
 	private String token = StringUtils.EMPTY;
-	private String otherToken;
+	private String otherToken = StringUtils.EMPTY;
 
 	@Before
 	public void setup() throws Exception {
@@ -155,6 +155,11 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.code").value(0));
 	}
 
+	/**
+	 * 距離算出テスト
+	 *
+	 * @throws Exception
+	 */
 	@Test
 	public void 距離を算出する() throws Exception {
 		// 座標更新（東京工科大学）
