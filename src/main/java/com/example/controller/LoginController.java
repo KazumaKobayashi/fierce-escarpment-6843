@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +43,12 @@ public class LoginController {
 	public void login(
 			@RequestParam("id") String userId,
 			@RequestParam("password") String password,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException{
 		Response res = new Response();
 		try {
 			LoginToken token = loginService.createToken(userId, password);
+			request.getSession().setAttribute("token", token);
 			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(0);
 			res.addObjects("token", token.getToken());

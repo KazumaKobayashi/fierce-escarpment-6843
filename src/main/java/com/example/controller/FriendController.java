@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.exception.FriendRelationExistsException;
 import com.example.exception.FriendRelationNotFoundException;
@@ -38,19 +38,19 @@ public class FriendController {
 	 * フレンド申請
 	 *
 	 * @param id
-	 * @param token
+	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/{id}/add", method = RequestMethod.POST)
 	public void addFriend(
 			@PathVariable("id") String id,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 		try {
-			LoginToken lToken = loginService.getLoginTokenByToken(token);
-			friendService.create(lToken.getUserId(), id);
+			friendService.create(token.getUserId(), id);
 			res.setStatusCode(0);
 		} catch (FriendRelationExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
@@ -71,21 +71,21 @@ public class FriendController {
 	 * フレンド申請を許可
 	 *
 	 * @param id
-	 * @param token
+	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/{id}/approve", method=RequestMethod.PUT)
 	public void approve(
 			@PathVariable("id") String id,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 		try {
-			LoginToken lToken = loginService.getLoginTokenByToken(token);
-			FriendRelation relation = friendService.getFriendRelation(lToken.getUserId(), id);
-			if (relation != null && !StringUtils.equals(relation.getPk().getId1(), lToken.getUserId())) {
-				friendService.allow(lToken.getUserId(), id);
+			FriendRelation relation = friendService.getFriendRelation(token.getUserId(), id);
+			if (relation != null && !StringUtils.equals(relation.getPk().getId1(), token.getUserId())) {
+				friendService.allow(token.getUserId(), id);
 				res.setStatusCode(0);
 			} else {
 				// 自分で出した申請を許可させるわけにはいかない
@@ -108,18 +108,18 @@ public class FriendController {
 	 *
 	 * @param id
 	 * @param token
-	 * @param response
+	 * @param request
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/{id}/unapprove", method=RequestMethod.DELETE)
 	public void unapprove(
 			@PathVariable("id") String id,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 		try {
-			LoginToken lToken = loginService.getLoginTokenByToken(token);
-			friendService.forbid(lToken.getUserId(), id);
+			friendService.forbid(token.getUserId(), id);
 			res.setStatusCode(0);
 		} catch (FriendRelationNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと

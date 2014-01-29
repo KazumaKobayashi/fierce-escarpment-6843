@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +40,12 @@ public class LogoutController {
 	public void logout(
 			@RequestParam("id") String id,
 			@RequestParam("password") String password,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
 			logoutService.deleteToken(id, password);
+			request.getSession().removeAttribute("token");
 			res.setStatusCode(0);
 		} catch (LoginTokenNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
