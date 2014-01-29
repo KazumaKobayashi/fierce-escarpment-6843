@@ -30,13 +30,14 @@ public class GroupServiceImpl implements GroupService{
 	
 	@Transactional
 	@Override
-	public Group create(String name){
+	public Group create(String userId, String name){
 		name = EscapeUtil.escapeSQL(name);
 		// TODO: グループの存在確認
 
 		//グループ登録
 		Group group = new Group();
 		group.setGroupname(name);
+		group.setOwner(userId);
 		em.persist(group);
 		return group;
 	}

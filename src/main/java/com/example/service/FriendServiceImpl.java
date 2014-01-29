@@ -1,6 +1,8 @@
 package com.example.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -72,6 +74,9 @@ public class FriendServiceImpl implements FriendService {
 		relation = new FriendRelation();
 		relation.setPk(pk);
 		relation.setAllowed(false);
+		Timestamp now = new Timestamp(new Date().getTime());
+		relation.setCreatedAt(now);
+		relation.setUpdatedAt(now);
 		// 保存
 		em.persist(relation);
 		return relation;
@@ -151,46 +156,29 @@ public class FriendServiceImpl implements FriendService {
 	@Transactional
 	@Override
 	public List<User> getRelatingList(String id) {
-		TypedQuery<FriendRelation> query = em.createQuery("select fr from FriendRelation fr where fr.pk.id1 = :id and fr.allowed = false", FriendRelation.class);
+		TypedQuery<User> query = em.createQuery("select u from FriendRelation fr inner join fr.user2 u where fr.pk.id1 = :id and fr.allowed = false", User.class);
 		query.setParameter("id", id);
-		query.setMaxResults(10);
-		List<User> users = new ArrayList<User>();
-		// 無理やり取ってくる
-		for (FriendRelation fr : query.getResultList()) {
-			users.add(userService.getUser(fr.getPk().getId2()));
-		}
-		return users;
+		return query.getResultList();
 	}
 
 	@Transactional
 	@Override
 	public List<User> getRelatedList(String id) {
-		TypedQuery<FriendRelation> query = em.createQuery("select fr from FriendRelation fr where fr.pk.id2 = :id and fr.allowed = false", FriendRelation.class);
+		TypedQuery<User> query = em.createQuery("select u from FriendRelation fr inner join fr.user1 u where fr.pk.id2 = :id and fr.allowed = false", User.class);
 		query.setParameter("id", id);
-		query.setMaxResults(10);
-		List<User> users = new ArrayList<User>();
-		// 無理やり取ってくる
-		for (FriendRelation fr : query.getResultList()) {
-			users.add(userService.getUser(fr.getPk().getId1()));
-		}
-		return users;
+		return query.getResultList();
 	}
 
 	@Transactional
 	@Override
 	public List<User> getFriendList(String id) {
-		// かなり無理矢理なので遅いはず
-		TypedQuery<FriendRelation> query = em.createQuery("select fr from FriendRelation fr where fr.pk.id1 = :id and fr.allowed = true", FriendRelation.class);
-		query.setParameter("id", id);
 		List<User> users = new ArrayList<User>();
-		for (FriendRelation fr : query.getResultList()) {
-			users.add(userService.getUser(fr.getPk().getId2()));
-		}
-		query = em.createQuery("select fr from FriendRelation fr where fr.pk.id2 = :id and fr.allowed = true", FriendRelation.class);
+		TypedQuery<User> query = em.createQuery("select u from FriendRelation fr inner join fr.user2 u where fr.pk.id1 = :id and fr.allowed = true", User.class);
 		query.setParameter("id", id);
-		for (FriendRelation fr : query.getResultList()) {
-			users.add(userService.getUser(fr.getPk().getId1()));
-		}
+		users.addAll(query.getResultList());
+		query = em.createQuery("select u from FriendRelation fr inner join fr.user1 u where fr.pk.id2 = :id and fr.allowed = true", User.class);
+		query.setParameter("id", id);
+		users.addAll(query.getResultList());
 		return users;
 	}
 

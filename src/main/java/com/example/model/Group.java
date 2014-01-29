@@ -34,12 +34,20 @@ public class Group implements Serializable{
 	@Column(name="name", nullable=false)
 	private String groupname;
 	
+	@JsonProperty("owner")
+	@Column(name = "owner")
+	private String owner;
+	
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
 	public void setGroupname(String groupname) {
 		this.groupname = groupname;
+	}
+	
+	public void setOwner(String owner){
+		this.owner = owner;
 	}
 
 	public Integer getId(){
@@ -50,4 +58,7 @@ public class Group implements Serializable{
 		return groupname;
 	}
 	
+	public String getOwner(){
+		return owner;
+	}
 }

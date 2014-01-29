@@ -87,15 +87,17 @@ public class GroupController {
 	 * @param groupId
 	 * @param groupname
 	 * @param response
+	 * @param owner
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/create", method=RequestMethod.POST)
    	public void create(
+   			@RequestParam("owner") String owner,
    			@RequestParam("name") String groupname,
    			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
-			Group group = groupService.create(groupname);
+			Group group = groupService.create(owner,groupname);
 			//TODO:正しいステータスコードを作成し設定のこと
 			res.setStatusCode(0);
 			res.addObjects("group", group);
