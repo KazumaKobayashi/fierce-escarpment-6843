@@ -1,6 +1,8 @@
 package com.example.service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -72,6 +74,9 @@ public class FriendServiceImpl implements FriendService {
 		relation = new FriendRelation();
 		relation.setPk(pk);
 		relation.setAllowed(false);
+		Timestamp now = new Timestamp(new Date().getTime());
+		relation.setCreatedAt(now);
+		relation.setUpdatedAt(now);
 		// 保存
 		em.persist(relation);
 		return relation;

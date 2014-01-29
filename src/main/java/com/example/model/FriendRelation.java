@@ -1,9 +1,12 @@
 package com.example.model;
 
+import java.sql.Timestamp;
+
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 /**
  * 友達かどうかのクラス
@@ -20,6 +23,13 @@ public class FriendRelation {
 	@Column(name="allowed", nullable=false)
 	private boolean allowed;
 
+	@Column(name="created_at", nullable=false)
+	private Timestamp createdAt;
+
+	@Version
+	@Column(name="updated_at", nullable=false)
+	private Timestamp updatedAt;
+
 	public void setPk(FriendRelationPK pk) {
 		this.pk = pk;
 	}
@@ -28,11 +38,27 @@ public class FriendRelation {
 		this.allowed = allowed;
 	}
 
+	public void setCreatedAt(Timestamp createdAt) {
+		this.createdAt = createdAt;
+	}
+
+	public void setUpdatedAt(Timestamp updatedAt) {
+		this.updatedAt = updatedAt;
+	}
+
 	public FriendRelationPK getPk() {
 		return pk;
 	}
 
 	public boolean isAllowed() {
 		return allowed;
+	}
+
+	public Timestamp getCreatedAt() {
+		return createdAt;
+	}
+
+	public Timestamp getUpdatedAt() {
+		return updatedAt;
 	}
 }
