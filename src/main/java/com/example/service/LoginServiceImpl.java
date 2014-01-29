@@ -68,13 +68,18 @@ public class LoginServiceImpl implements LoginService {
 			}
 		}
 
-		// 現在時刻のタイムスタンプを取得
-		Timestamp now = DateUtil.getCurrentTimestamp();
+		// ログイントークンが重複しなくなるまで生成し直す
+		String randomStr = RandomStringUtils.randomAlphanumeric(10);
+		while(getLoginTokenByToken(randomStr) != null) {
+			randomStr = RandomStringUtils.randomAlphanumeric(10);
+		}
 
 		// ログイントークンの作成
 		token = new LoginToken();
 		token.setUserId(user.getId());
-		token.setToken(RandomStringUtils.randomAlphanumeric(10));
+		token.setToken(randomStr);
+		Timestamp now = DateUtil.getCurrentTimestamp();
+
 		token.setCreatedAt(now);
 		token.setUpdatedAt(now);
 		// ユーザ側にも設定する
