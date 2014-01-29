@@ -5,6 +5,8 @@ import java.sql.Timestamp;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 
@@ -29,6 +31,14 @@ public class FriendRelation {
 	@Version
 	@Column(name="updated_at", nullable=false)
 	private Timestamp updatedAt;
+
+	@ManyToOne
+	@JoinColumn(name="id1", insertable=false, updatable=false)
+	private User user1;
+
+	@ManyToOne
+	@JoinColumn(name="id2", insertable=false, updatable=false)
+	private User user2;
 
 	public void setPk(FriendRelationPK pk) {
 		this.pk = pk;
