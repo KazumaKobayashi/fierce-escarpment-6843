@@ -46,6 +46,7 @@ public class LoginController {
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException{
 		Response res = new Response();
+
 		try {
 			LoginToken token = loginService.createToken(userId, password);
 			request.getSession().setAttribute("token", token);
@@ -65,6 +66,7 @@ public class LoginController {
 			res.setStatusCode(-1);
 			res.addErrorMessage(e.toString());
 		}
+
 		// レスポンスの設定
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());

@@ -109,6 +109,7 @@ public class UserController {
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
 		try {
 			if (StringUtils.equals(token.getUserId(), userId)) {
 				User user = userService.update(userId, email, username);
