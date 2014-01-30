@@ -63,9 +63,11 @@ public class User implements Serializable {
 	@OneToOne(mappedBy="user")
 	private LoginToken token;
 
+	@JsonIgnore
 	@OneToMany(mappedBy="user1")
 	private List<FriendRelation> relatingList;
 
+	@JsonIgnore
 	@OneToMany(mappedBy="user2")
 	private List<FriendRelation> relatedList;
 
