@@ -35,4 +35,13 @@ public interface GroupService{
 	 * @throws GroupNotFoundException 
 	 */
 	public Group getGroup(Integer id) throws GroupNotFoundException;
+	/**
+	 * グループにユーザーを追加する
+	 * 
+	 * @param username
+	 * @param id
+	 * @return
+	 * @throws GroupNotFoundException
+	 */
+	public Group join(String username, Integer id) throws GroupNotFoundException;
 }

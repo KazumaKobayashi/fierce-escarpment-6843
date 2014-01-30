@@ -35,7 +35,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 		super.setup();
 		//グループ登録
 		MvcResult result
-			= mockMvc.perform(post("/groups/create")
+			= mockMvc.perform(post("/groups/create")//urlへのpostリクエスト
 							.param("name", name)
 							.param("owner",owner))
 				.andExpect(status().isOk())
@@ -54,11 +54,12 @@ public class GroupControllerTest extends AbstractControllerTest {
 	 * 
 	 * @throws Exception
 	 */
+	//条件と合致しているか(andExpect)
 	@Test
 	public void グループ情報を取得する() throws Exception{
-		mockMvc.perform(get("/groups/" + id + "/info"))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
+		mockMvc.perform(get("/groups/" + id + "/info"))//urlへのgetリクエスト
+			.andExpect(status().isOk())//statusが200(OK)になって返ってきてるか
+			.andExpect(content().contentType("application/json"))//contentが指定されたcontentTypeで作成されているか
 			//TODO:正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0))
 			.andExpect(jsonPath("$.group.id").value(id))
@@ -72,7 +73,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 	 */
 	@Test
 	public void グループ情報を更新する() throws Exception {
-		mockMvc.perform(put("/groups/" + id + "/info")
+		mockMvc.perform(put("/groups/" + id + "/info")//urlへのputリクエスト
 						.param("name",name))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))

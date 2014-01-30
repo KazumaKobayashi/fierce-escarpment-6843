@@ -92,8 +92,8 @@ public class GroupController {
 	 */
 	@RequestMapping(value="/create", method=RequestMethod.POST)
    	public void create(
-   			@RequestParam("owner") String owner,
    			@RequestParam("name") String groupname,
+   			@RequestParam("owner") String owner,
    			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
