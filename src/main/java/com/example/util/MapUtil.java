@@ -60,8 +60,6 @@ public final class MapUtil {
 			BigDecimal e = new BigDecimal(Math.sqrt((a * a - b * b) / (a * a)));
 			this.e2 = e.pow(2);
 			this.mNum = this.a.multiply(new BigDecimal(1 - this.e2.doubleValue()));
-			System.out.println(e2);
-			System.out.println(mNum);
 		}
 
 		private double getA() {
