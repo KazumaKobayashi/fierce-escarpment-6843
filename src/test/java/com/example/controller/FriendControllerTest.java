@@ -7,18 +7,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.UUID;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.jayway.jsonpath.JsonPath;
 
 /**
  * FriendControllerのテスト
@@ -38,8 +37,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 	private String otherId = "kazuma";
 	private String otherEmail = "kazuma@kazuma.com";
 
-	private String token = StringUtils.EMPTY;
-	private String otherToken = StringUtils.EMPTY;
+	private MockHttpSession otherSession;
 
 	@Before
 	public void setup() throws Exception {
@@ -57,16 +55,15 @@ public class FriendControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.user.name").value(id))
 			.andExpect(jsonPath("$.user.email").value(email));
 		// ログイントークン発行
-		MvcResult result = mockMvc.perform(post("/login")
+		mockMvc.perform(post("/login")
 						.param("id", id)
-						.param("password", password))
+						.param("password", password)
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0))
 			.andReturn();
-		// ログイントークン取得
-		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 
 		// 他のユーザを登録する
 		mockMvc.perform(post("/register")
@@ -77,16 +74,16 @@ public class FriendControllerTest extends AbstractControllerTest {
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0));
-		result = mockMvc.perform(post("/login")
+		// 他ユーザのセッションを作成
+		otherSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
+		mockMvc.perform(post("/login")
 						.param("id", otherId)
-						.param("password", password))
+						.param("password", password)
+						.session(otherSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			.andExpect(jsonPath("$.code").value(0))
 			.andReturn();
-
-		// トークン取得する
-		otherToken = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 	}
 
 	/**
@@ -97,7 +94,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 	@Test
 	public void フレンドを申請する() throws Exception {
 		mockMvc.perform(post("/friends/" + otherId + "/add")
-						.param("token", token))
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -113,7 +110,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 	public void フレンド申請を許可する() throws Exception {
 		// フレンドを申請する
 		mockMvc.perform(post("/friends/" + otherId + "/add")
-						.param("token", token))
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -121,7 +118,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + id + "/approve")
-						.param("token", otherToken))
+						.session(otherSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -138,7 +135,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 	public void フレンド申請を自身許可する() throws Exception {
 		// フレンドを申請する
 		mockMvc.perform(post("/friends/" + otherId + "/add")
-						.param("token", token))
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -146,7 +143,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + otherId + "/approve")
-						.param("token", token))
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -162,7 +159,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 	public void フレンド申請を却下する() throws Exception {
 		// フレンドを申請する
 		mockMvc.perform(post("/friends/" + otherId + "/add")
-						.param("token", token))
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -170,7 +167,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 
 		// フレンド申請を却下する
 		mockMvc.perform(delete("/friends/" + id + "/unapprove")
-						.param("token", otherToken))
+						.session(otherSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -186,7 +183,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 	public void フレンド申請を自身で却下する() throws Exception {
 		// フレンドを申請する
 		mockMvc.perform(post("/friends/" + otherId + "/add")
-						.param("token", token))
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -194,7 +191,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 
 		// フレンド申請を却下する
 		mockMvc.perform(delete("/friends/" + otherId + "/unapprove")
-						.param("token", token))
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと

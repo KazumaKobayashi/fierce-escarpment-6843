@@ -1,5 +1,8 @@
 package com.example.service;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
@@ -44,6 +47,9 @@ public class CoordinateServiceImpl implements CoordinateService {
 		coord.setLat(lat);
 		coord.setLng(lng);
 		coord.setUser(user);
+		Timestamp now = new Timestamp(new Date().getTime());
+		coord.setCreatedAt(now);
+		coord.setUpdatedAt(now);
 		// ユーザ側も設定
 		user.setCoord(coord);
 		em.persist(coord);

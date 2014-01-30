@@ -63,6 +63,7 @@ public class RegisterController {
 			res.setStatusCode(-1);
 			res.addErrorMessage(e.toString());
 		}
+
 		// レスポンスの設定
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());

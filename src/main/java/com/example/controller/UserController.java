@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,7 @@ public class UserController {
 	 * ユーザの情報を取得
 	 *
 	 * @param userId
+	 * @param request
 	 * @param response
 	 * @return
 	 * @throws IOException 
@@ -52,14 +54,15 @@ public class UserController {
 	@RequestMapping(value="/{id}/info", method=RequestMethod.GET)
 	public void user(
 			@PathVariable("id") String userId,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		User user = userService.getUser(userId);
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
 		if (user != null) {
-			LoginToken lToken = loginService.getLoginTokenByToken(token);
 			// TODO: ここらへんをどうにかしてまとめたい
-			if (StringUtils.equals(userId, lToken.getUserId())) {
+			if (StringUtils.equals(userId, token.getUserId())) {
 				// ログイントークンが自分自身ならば友達関係を追加
 				res.addObjects("relating_users", friendService.getRelatingList(userId));
 				res.addObjects("related_users", friendService.getRelatedList(userId));
@@ -67,7 +70,7 @@ public class UserController {
 				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(0);
 				res.addObjects("user", user);
-			} else if (friendService.isFriend(userId, lToken.getUserId())) {
+			} else if (friendService.isFriend(userId, token.getUserId())) {
 				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(0);
 				res.addObjects("user", user);
@@ -79,6 +82,7 @@ public class UserController {
 			// TODO: 正しいエラーコードを設定のこと(UserNotFoundExceptionと同じ)
 			res.setStatusCode(-1);
 		}
+
 		// 返却する値
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
@@ -86,9 +90,12 @@ public class UserController {
 
 	/**
 	 * ユーザ情報を更新
+	 * 自分からのアクセスでなければ登録出来ない
 	 *
 	 * @param userId
+	 * @param email
 	 * @param username
+	 * @param request
 	 * @param response
 	 * @return
 	 * @throws IOException 
@@ -98,12 +105,13 @@ public class UserController {
 			@PathVariable("id") String userId,
 			@RequestParam("email") String email,
 			@RequestParam("name") String username,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
 		try {
-			LoginToken lToken = loginService.getLoginToken(userId);
-			if (StringUtils.equals(lToken.getToken(), token)) {
+			if (StringUtils.equals(token.getUserId(), userId)) {
 				User user = userService.update(userId, email, username);
 				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(0);
@@ -117,6 +125,7 @@ public class UserController {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
 		}
+
 		// 返却する値
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
@@ -125,10 +134,12 @@ public class UserController {
 	/**
 	 * パスワードの更新を行う
 	 * 現在のパスワードと新しいパスワードが必要となる
+	 * 自分からのアクセスでなければ更新出来ない
 	 *
 	 * @param userId
 	 * @param currentPassword
 	 * @param newPassword
+	 * @param request
 	 * @param response
 	 * @return
 	 * @throws IOException 
@@ -138,12 +149,13 @@ public class UserController {
 			@PathVariable("id") String userId,
 			@RequestParam("current_password") String currentPassword,
 			@RequestParam("new_password") String newPassword,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
 		try {
-			LoginToken lToken = loginService.getLoginToken(userId);
-			if (StringUtils.equals(lToken.getToken(), token)) {
+			if (StringUtils.equals(token.getUserId(), userId)) {
 				userService.changePassword(userId, currentPassword, newPassword);
 				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(0);
@@ -166,10 +178,12 @@ public class UserController {
 
 	/**
 	 * ユーザの座標を更新する
+	 * 自分からのアクセスでなければ更新できない
 	 *
 	 * @param userId
 	 * @param lat
 	 * @param lng
+	 * @param request
 	 * @param response
 	 * @return
 	 * @throws IOException 
@@ -179,14 +193,15 @@ public class UserController {
 			@PathVariable("id") String userId,
 			@RequestParam("lat") Double lat,
 			@RequestParam("lng") Double lng,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		lat = lat == null ? 0 : lat;
 		lng = lng == null ? 0 : lng;
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
 		try {
-			LoginToken lToken = loginService.getLoginToken(userId);
-			if (StringUtils.equals(lToken.getToken(), token)) {
+			if (StringUtils.equals(token.getUserId(), userId)) {
 				coordinateService.update(userId, lat, lng);
 				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(0);
@@ -211,19 +226,20 @@ public class UserController {
 	 * メートルとキロメートルで返してくれる
 	 *
 	 * @param userId
-	 * @param token
+	 * @param request
 	 * @param response
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/{id}/coordinate/diff", method=RequestMethod.GET)
 	public void getDistanceBetween(
 			@PathVariable("id") String userId,
-			@RequestParam("token") String token,
+			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
 		try {
-			LoginToken lToken = loginService.getLoginTokenByToken(token);
-			double meter = Math.floor(coordinateService.getDistanceBetween(userId, lToken.getUserId()));
+			double meter = Math.floor(coordinateService.getDistanceBetween(userId, token.getUserId()));
 			res.setStatusCode(0);
 			res.addObjects("meter", Math.round(meter));
 			res.addObjects("kilometer", meter / 1000.0);
