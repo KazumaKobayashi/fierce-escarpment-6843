@@ -34,6 +34,9 @@ import com.example.service.UserService;
 @Controller
 public class UserController {
 	@Autowired
+	private FriendController friendController;
+
+	@Autowired
 	private UserService userService;
 	@Autowired
 	private CoordinateService coordinateService;
@@ -247,5 +250,21 @@ public class UserController {
 
 		// 返却する値
 		response.getWriter().print(res.getResponseJson());
+	}
+
+	/**
+	 * フレンド一覧を取得
+	 * 実装は、フレンドにリダイレクトするだけ
+	 *
+	 * @param userId
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/friends", method=RequestMethod.GET)
+	public void friends(
+			@PathVariable("id") String userId,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		friendController.friends(userId, request, response);
 	}
 }

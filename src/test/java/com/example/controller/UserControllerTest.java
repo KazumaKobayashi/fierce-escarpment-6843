@@ -295,4 +295,33 @@ public class UserControllerTest extends AbstractControllerTest {
 			// TODO: 正しいエラーコードを設定すること
 			.andExpect(jsonPath("$.code").value(-1));
 	}
+
+	/**
+	 * フレンド取得テスト
+	 * 実際はリダイレクトがうまくいくかのテスト
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void フレンドを取得() throws Exception {
+		mockMvc.perform(get("/users/" + id + "/friends")
+							.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+	}
+
+	/**
+	 * 他のユーザのフレンド取得テスト
+	 * 実際はリダイレクトがうまくいくかのテスト
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他のユーザのフレンドを取得() throws Exception {
+		mockMvc.perform(get("/users/" + id + "/friends")
+							.session(otherSession))
+			.andExpect(status().isNotFound());
+	}
 }

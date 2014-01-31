@@ -1,11 +1,13 @@
 package com.example.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.hasSize;
 
 import java.util.UUID;
 
@@ -84,6 +86,72 @@ public class FriendControllerTest extends AbstractControllerTest {
 			.andExpect(content().contentType("application/json"))
 			.andExpect(jsonPath("$.code").value(0))
 			.andReturn();
+	}
+
+	/**
+	 * フレンド一覧取得テスト
+	 * 0人の場合
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 自分のフレンドを取得する_0人() throws Exception {
+		// フレンドを取得する
+		mockMvc.perform(get("/friends/" + id + "/")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.friends", hasSize(0)));
+	}
+
+	/**
+	 * フレンド一覧取得テスト
+	 * 1人の場合(複数人を推定)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 自分のフレンドを取得する_1人() throws Exception {
+		// フレンドを申請する
+		mockMvc.perform(post("/friends/" + otherId + "/add")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請を許可する
+		mockMvc.perform(put("/friends/" + id + "/approve")
+						.session(otherSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンドを取得する
+		mockMvc.perform(get("/friends/" + id + "/")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.friends", hasSize(1)));
+	}
+
+	/**
+	 * フレンド一覧取得テスト
+	 * 他人のフレンドなので取得出来てはいけない
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他人のフレンドを取得する() throws Exception {
+		// フレンドを取得する
+		mockMvc.perform(get("/friends/" + id + "/")
+						.session(otherSession))
+			.andExpect(status().isNotFound());
 	}
 
 	/**

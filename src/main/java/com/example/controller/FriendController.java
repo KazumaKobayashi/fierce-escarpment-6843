@@ -35,6 +35,37 @@ public class FriendController {
 	private LoginService loginService;
 
 	/**
+	 * フレンド一覧を取得
+	 *
+	 * @param id
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/", method=RequestMethod.GET)
+	public void friends(
+			@PathVariable("id") String id,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
+		System.out.println(id);
+		System.out.println(token.getUserId());
+		if (StringUtils.equals(token.getUserId(), id)) {
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+			res.addObjects("friends", friendService.getFriendList(id));
+		} else {
+			// 自身でなければNotFoundを返す
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+
+		// 返却する値を設定する
+		response.getWriter().println(res.getResponseJson());
+	}
+
+	/**
 	 * フレンド申請
 	 *
 	 * @param id
