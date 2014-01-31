@@ -69,7 +69,7 @@ public class UserServiceImpl implements UserService {
 		user.setUpdatedAt(now);
 		em.persist(user);
 		try {
-			coordinateService.create(userId, 0.0, 0.0);
+			coordinateService.create(userId, null, null);
 		} catch (CoordinateExistsException e) {
 			// 起こりえるわけがないけど念の為に
 			// TODO: ロガーの追加
