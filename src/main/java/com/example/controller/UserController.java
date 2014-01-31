@@ -64,16 +64,8 @@ public class UserController {
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
 		if (user != null) {
-			// TODO: ここらへんをどうにかしてまとめたい
-			if (StringUtils.equals(userId, token.getUserId())) {
-				// ログイントークンが自分自身ならば友達関係を追加
-				res.addObjects("relating_users", friendService.getRelatingList(userId));
-				res.addObjects("related_users", friendService.getRelatedList(userId));
-				res.addObjects("friend_users", friendService.getFriendList(userId));
-				// TODO: 正しいステータスコードを設定のこと
-				res.setStatusCode(0);
-				res.addObjects("user", user);
-			} else if (friendService.isFriend(userId, token.getUserId())) {
+			if (StringUtils.equals(userId, token.getUserId())
+					|| friendService.isFriend(userId, token.getUserId())) {
 				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(0);
 				res.addObjects("user", user);
