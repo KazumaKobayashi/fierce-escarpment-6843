@@ -23,13 +23,13 @@ public class JoinPK implements Serializable {
 	private String userId;
 
 	@Column(name="group_id")
-	private String groupId;
+	private Integer groupId;
 
 	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
-	public void setGroupId(String groupId) {
+	public void setGroupId(Integer groupId) {
 		this.groupId = groupId;
 	}
 
@@ -37,10 +37,9 @@ public class JoinPK implements Serializable {
 		return userId;
 	}
 
-	public String getGroupId() {
+	public Integer getGroupId() {
 		return groupId;
 	}
-
 	/**
 	 * 比較関数
 	 * 作成しないと出来ないので
@@ -57,7 +56,7 @@ public class JoinPK implements Serializable {
 		}
 		JoinPK pk = (JoinPK) object;
 		return StringUtils.equals(userId, pk.userId)
-				&& StringUtils.equals(groupId, pk.groupId);
+				&& (groupId == pk.groupId);
 	}
 
 	/**

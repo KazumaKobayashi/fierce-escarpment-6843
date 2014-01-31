@@ -10,6 +10,7 @@ import com.example.model.Group;
  *
  */
 public interface GroupService{
+	
 	/**
 	 * グループの作成
 	 *
@@ -27,6 +28,7 @@ public interface GroupService{
 	 * @throws GroupNotFoundException 
 	 */
 	public Group update(Integer id,String name) throws GroupNotFoundException;
+	
 	/**
 	 * グループの情報を取得する
 	 *
@@ -35,6 +37,7 @@ public interface GroupService{
 	 * @throws GroupNotFoundException 
 	 */
 	public Group getGroup(Integer id) throws GroupNotFoundException;
+	
 	/**
 	 * グループにユーザーを追加する
 	 * 
@@ -43,5 +46,5 @@ public interface GroupService{
 	 * @return
 	 * @throws GroupNotFoundException
 	 */
-	public Group join(String username, Integer id) throws GroupNotFoundException;
+	public Group join(String userId, Integer id) throws GroupNotFoundException;
 }
