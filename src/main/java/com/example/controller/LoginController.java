@@ -68,7 +68,6 @@ public class LoginController {
 		}
 
 		// レスポンスの設定
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }

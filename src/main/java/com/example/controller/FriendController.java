@@ -63,7 +63,6 @@ public class FriendController {
 		}
 
 		// 返却する値を設定する
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -99,7 +98,6 @@ public class FriendController {
 		}
 
 		// 返却する値を設定する
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -128,7 +126,6 @@ public class FriendController {
 		}
 
 		// 返却する値を設定する
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }

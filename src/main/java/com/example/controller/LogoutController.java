@@ -57,7 +57,6 @@ public class LogoutController {
 			res.addErrorMessage(e.toString());
 		}
 		// レスポンスを設定
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }

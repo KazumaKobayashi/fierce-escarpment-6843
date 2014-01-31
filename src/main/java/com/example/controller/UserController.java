@@ -84,7 +84,6 @@ public class UserController {
 		}
 
 		// 返却する値
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -127,7 +126,6 @@ public class UserController {
 		}
 
 		// 返却する値
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -172,7 +170,6 @@ public class UserController {
 			res.setStatusCode(-1);
 		}
 		// 返却する値
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -217,7 +214,6 @@ public class UserController {
 		}
 
 		// 返却する値
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -250,7 +246,6 @@ public class UserController {
 		}
 
 		// 返却する値
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }
