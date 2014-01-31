@@ -246,7 +246,7 @@ public class UserController {
 
 	/**
 	 * フレンド一覧を取得
-	 * 実装は、フレンドにリダイレクトするだけ
+	 * 実装は、フレンドに処理を流すだけ
 	 *
 	 * @param userId
 	 * @param response
@@ -258,5 +258,39 @@ public class UserController {
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		friendController.friends(userId, request, response);
+	}
+
+	/**
+	 * フレンド申請中一覧を取得
+	 * 実装はフレンドに処理を流すだけ
+	 *
+	 * @param userId
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/relating", method=RequestMethod.GET)
+	public void relating(
+			@PathVariable("id") String userId,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		friendController.relating(userId, request, response);
+	}
+
+	/**
+	 * フレンド申請待ち一覧を取得
+	 * 実装はフレンドに処理を流すだけ
+	 *
+	 * @param userId
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/related", method=RequestMethod.GET)
+	public void related(
+			@PathVariable("id") String userId,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		friendController.related(userId, request, response);
 	}
 }

@@ -324,4 +324,30 @@ public class UserControllerTest extends AbstractControllerTest {
 							.session(otherSession))
 			.andExpect(status().isNotFound());
 	}
+
+	/**
+	 * 他のユーザのフレンド申請中一覧取得テスト
+	 * 実際はリダイレクトがうまくいくかのテスト
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他のユーザのフレンド申請中一覧を取得() throws Exception {
+		mockMvc.perform(get("/users/" + id + "/relating")
+							.session(otherSession))
+			.andExpect(status().isNotFound());
+	}
+
+	/**
+	 * 他のユーザのフレンド申請待ち一覧取得テスト
+	 * 実際はリダイレクトがうまくいくかのテスト
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void 他のユーザのフレンド申請待ち一覧を取得() throws Exception {
+		mockMvc.perform(get("/users/" + id + "/related")
+							.session(otherSession))
+			.andExpect(status().isNotFound());
+	}
 }

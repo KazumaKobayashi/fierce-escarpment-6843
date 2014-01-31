@@ -90,12 +90,20 @@ public class FriendControllerTest extends AbstractControllerTest {
 
 	/**
 	 * フレンド一覧取得テスト
-	 * 0人の場合
+	 * フレンドを申請しているが承認されていないのでいないはず
 	 *
 	 * @throws Exception
 	 */
 	@Test
 	public void 自分のフレンドを取得する_0人() throws Exception {
+		// フレンドを申請する
+		mockMvc.perform(post("/friends/" + otherId + "/add")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
 		// フレンドを取得する
 		mockMvc.perform(get("/friends/" + id + "/")
 						.session(mockSession))
@@ -108,7 +116,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 
 	/**
 	 * フレンド一覧取得テスト
-	 * 1人の場合(複数人を推定)
+	 * フレンド申請をしていて承認されているので取得出来るはず
 	 *
 	 * @throws Exception
 	 */
@@ -150,6 +158,150 @@ public class FriendControllerTest extends AbstractControllerTest {
 	public void 他人のフレンドを取得する() throws Exception {
 		// フレンドを取得する
 		mockMvc.perform(get("/friends/" + id + "/")
+						.session(otherSession))
+			.andExpect(status().isNotFound());
+	}
+
+	/**
+	 * フレンド申請中一覧取得
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void フレンド申請中一覧を取得する_1人() throws Exception {
+		// フレンドを申請する
+		mockMvc.perform(post("/friends/" + otherId + "/add")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請中一覧を取得する
+		mockMvc.perform(get("/friends/" + id + "/relating")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.relating", hasSize(1)));
+	}
+
+	/**
+	 * フレンド申請中一覧取得
+	 * 承認されているので0人なはず
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void フレンド申請中一覧を取得する_0人() throws Exception {
+		// フレンドを申請する
+		mockMvc.perform(post("/friends/" + otherId + "/add")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請を許可する
+		mockMvc.perform(put("/friends/" + id + "/approve")
+						.session(otherSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請中一覧を取得する
+		mockMvc.perform(get("/friends/" + id + "/relating")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.relating", hasSize(0)));
+	}
+
+	/**
+	 * フレンド申請中一覧取得
+	 * 他のユーザの申請中一覧は取得出来ないのでNotFoundなはず
+	 *
+	 * @throws Exception
+	 */
+	public void 他ユーザのフレンド申請中一覧を取得する() throws Exception {
+		// フレンド申請中一覧を取得する
+		mockMvc.perform(get("/friends/" + id + "/relating")
+						.session(otherSession))
+			.andExpect(status().isNotFound());
+	}
+
+	/**
+	 * フレンド申請待ち一覧取得
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void フレンド申請待ち一覧を取得する_1人() throws Exception {
+		// フレンドを申請される
+		mockMvc.perform(post("/friends/" + id + "/add")
+						.session(otherSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請中一覧を取得する
+		mockMvc.perform(get("/friends/" + id + "/related")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.related", hasSize(1)));
+	}
+
+	/**
+	 * フレンド申請待ち一覧取得
+	 * 承認するので0人なはず
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	public void フレンド申請待ち一覧を取得する_0人() throws Exception {
+		// フレンドを申請される
+		mockMvc.perform(post("/friends/" + id + "/add")
+						.session(otherSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請を許可する
+		mockMvc.perform(put("/friends/" + otherId + "/approve")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0));
+
+		// フレンド申請中一覧を取得する
+		mockMvc.perform(get("/friends/" + id + "/related")
+						.session(mockSession))
+			.andExpect(status().isOk())
+			.andExpect(content().contentType("application/json"))
+			// TODO: 正しいステータスコードを設定のこと
+			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.related", hasSize(0)));
+	}
+
+	/**
+	 * フレンド申請待ち一覧取得
+	 * 他のユーザの申請待ち一覧は取得出来ないのでNotFoundなはず
+	 *
+	 * @throws Exception
+	 */
+	public void 他人のフレンド申請待ち一覧を取得する() throws Exception {
+		// フレンド申請中一覧を取得する
+		mockMvc.perform(get("/friends/" + id + "/related")
 						.session(otherSession))
 			.andExpect(status().isNotFound());
 	}
