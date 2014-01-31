@@ -10,6 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.GroupNotFoundException;
 import com.example.model.Group;
+import com.example.model.Join;
+import com.example.model.JoinPK;
 import com.example.util.EscapeUtil;
 
 
@@ -56,6 +58,24 @@ public class GroupServiceImpl implements GroupService{
 		return group;
 	}
 
+	public Group join(String userId,Integer groupId) throws GroupNotFoundException{
+		Group group = em.find(Group.class,groupId);
+		if( group == null){
+			throw new GroupNotFoundException("Group not found Id:"+groupId);
+				// TODO:存在しない例外処理
+		}
+		
+		Join join = new Join();
+		JoinPK pk = new JoinPK();
+		
+		pk.setUserId(userId);
+		pk.setGroupId(groupId);
+		
+		join.setPk(pk);
+		em.persist(join);
+		
+		return group;
+	}
 	public Group getGroup(Integer groupId) throws GroupNotFoundException{
 		if(groupId == null){
 			throw new GroupNotFoundException("Group not found Id:"+groupId);

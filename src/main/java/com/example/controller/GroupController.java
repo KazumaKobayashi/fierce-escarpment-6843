@@ -2,6 +2,7 @@ package com.example.controller;
 
 import java.io.IOException;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.example.exception.GroupNotFoundException;
 import com.example.jackson.Response;
 import com.example.model.Group;
+import com.example.model.LoginToken;
 import com.example.service.GroupService;
 /**
  * グループに関するコントローラ
@@ -83,21 +85,24 @@ public class GroupController {
 	}
 
 	/**
+	 * グループの作成
 	 * 
 	 * @param groupId
 	 * @param groupname
+	 * @param request
 	 * @param response
-	 * @param owner
 	 * @throws IOException
 	 */
 	@RequestMapping(value="/create", method=RequestMethod.POST)
    	public void create(
-   			@RequestParam("owner") String owner,
    			@RequestParam("name") String groupname,
+   			HttpServletRequest request,
    			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+		
 		try {
-			Group group = groupService.create(owner,groupname);
+			Group group = groupService.create(token.getUserId(),groupname);
 			//TODO:正しいステータスコードを作成し設定のこと
 			res.setStatusCode(0);
 			res.addObjects("group", group);
@@ -109,5 +114,37 @@ public class GroupController {
 		//レスポンスの設定
 		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());	
+	}
+	
+	/**
+	 * ユーザのグループへの参加
+	 * 
+	 * @param userId
+	 * @param groupId
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/join", method=RequestMethod.POST)
+	public void join(
+			@PathVariable("id") Integer id,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException{
+		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
+		try{
+			Group group = groupService.join(token.getUserId(),id);
+			//TODO:正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+			res.addObjects("group",group);
+		}catch(Exception e){
+			//TODO:正しいステータスコードを作成し設定のこと
+			res.setStatusCode(-1);
+			res.addErrorMessage(res.getResponseJson());
+		}
+		
+		//レスポンスの設定
+		response.setContentType("application/json");
+		response.getWriter().print(res.getResponseJson());
 	}
 }
