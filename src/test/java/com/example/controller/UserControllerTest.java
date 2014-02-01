@@ -1,16 +1,16 @@
 package com.example.controller;
 
-import java.util.UUID;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.jayway.jsonpath.JsonPath;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,7 +37,8 @@ public class UserControllerTest extends AbstractControllerTest {
 	private String otherId = "kazuma";
 	private String otherEmail = "kazuma@kazuma.com";
 
-	private MockHttpSession otherSession;
+	private String token;
+	private String otherToken;
 
 	@Before
 	public void setup() throws Exception {
@@ -55,18 +56,17 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.user.name").value(id))
 			.andExpect(jsonPath("$.user.email").value(email));
 		// ログイントークン発行
-		mockMvc.perform(post("/login")
+		MvcResult result = mockMvc.perform(post("/login")
 						.param("id", id)
-						.param("password", password)
-						.session(mockSession))
+						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0))
 			.andReturn();
+		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 
 		// 他ユーザの生成
-		otherSession = new MockHttpSession(wac.getServletContext(), UUID.randomUUID().toString());
 		// 他のユーザを登録する
 		mockMvc.perform(post("/register")
 						.param("id", otherId)
@@ -76,14 +76,14 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0));
-		mockMvc.perform(post("/login")
+		result = mockMvc.perform(post("/login")
 						.param("id", otherId)
-						.param("password", password)
-						.session(otherSession))
+						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			.andExpect(jsonPath("$.code").value(0))
 			.andReturn();
+		otherToken = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 	}
 
 	/**
@@ -94,7 +94,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void ユーザ情報を取得する() throws Exception {
 		mockMvc.perform(get("/users/" + id + "/info")
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -113,7 +113,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void 他のユーザが情報を取得する() throws Exception {
 		mockMvc.perform(get("/users/" + id + "/info")
-						.session(otherSession))
+						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -129,7 +129,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	public void 友達が情報を取得する() throws Exception {
 		// フレンドを申請する
 		mockMvc.perform(post("/friends/" + otherId + "/add")
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -137,14 +137,14 @@ public class UserControllerTest extends AbstractControllerTest {
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + id + "/approve")
-						.session(otherSession))
+						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0));
 
 		mockMvc.perform(get("/users/" + id + "/info")
-						.session(otherSession))
+						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -164,7 +164,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + id + "/info")
 						.param("email", email)
 						.param("name", id)
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -181,7 +181,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + id + "/password")
 						.param("current_password", password)
 						.param("new_password", "kazukihasegawa")
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -198,7 +198,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + id + "/coordinate")
 						.param("lat", "0.0")
 						.param("lng", "0.0")
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -216,7 +216,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + id + "/coordinate")
 						.param("lat", "35.626303")
 						.param("lng", "139.339350")
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -225,7 +225,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + otherId + "/coordinate")
 						.param("lat", "35.631364")
 						.param("lng", "139.330975")
-						.session(otherSession))
+						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -233,7 +233,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
 		// otherIdのユーザとの距離を求める距離取得
 		mockMvc.perform(get("/users/" + otherId + "/coordinate/diff")
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -253,7 +253,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + id + "/info")
 						.param("email", email)
 						.param("name", id)
-						.session(otherSession))
+						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいエラーコードを設定すること
@@ -271,7 +271,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + id + "/password")
 						.param("current_password", password)
 						.param("new_password", "kazuma")
-						.session(otherSession))
+						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいエラーコードを設定すること
@@ -289,7 +289,7 @@ public class UserControllerTest extends AbstractControllerTest {
 		mockMvc.perform(put("/users/" + id + "/coordinate")
 						.param("lat", "0.0")
 						.param("lng", "0.0")
-						.session(otherSession))
+						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいエラーコードを設定すること
@@ -305,7 +305,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void フレンドを取得() throws Exception {
 		mockMvc.perform(get("/users/" + id + "/friends")
-							.session(mockSession))
+							.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
@@ -321,7 +321,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void 他のユーザのフレンドを取得() throws Exception {
 		mockMvc.perform(get("/users/" + id + "/friends")
-							.session(otherSession))
+							.param("token", otherToken))
 			.andExpect(status().isNotFound());
 	}
 
@@ -334,7 +334,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void 他のユーザのフレンド申請中一覧を取得() throws Exception {
 		mockMvc.perform(get("/users/" + id + "/relating")
-							.session(otherSession))
+							.param("token", otherToken))
 			.andExpect(status().isNotFound());
 	}
 
@@ -347,7 +347,7 @@ public class UserControllerTest extends AbstractControllerTest {
 	@Test
 	public void 他のユーザのフレンド申請待ち一覧を取得() throws Exception {
 		mockMvc.perform(get("/users/" + id + "/related")
-							.session(otherSession))
+							.param("token", otherToken))
 			.andExpect(status().isNotFound());
 	}
 }
