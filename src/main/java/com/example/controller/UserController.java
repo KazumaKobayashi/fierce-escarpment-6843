@@ -34,6 +34,9 @@ import com.example.service.UserService;
 @Controller
 public class UserController {
 	@Autowired
+	private FriendController friendController;
+
+	@Autowired
 	private UserService userService;
 	@Autowired
 	private CoordinateService coordinateService;
@@ -61,16 +64,8 @@ public class UserController {
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
 		if (user != null) {
-			// TODO: ここらへんをどうにかしてまとめたい
-			if (StringUtils.equals(userId, token.getUserId())) {
-				// ログイントークンが自分自身ならば友達関係を追加
-				res.addObjects("relating_users", friendService.getRelatingList(userId));
-				res.addObjects("related_users", friendService.getRelatedList(userId));
-				res.addObjects("friend_users", friendService.getFriendList(userId));
-				// TODO: 正しいステータスコードを設定のこと
-				res.setStatusCode(0);
-				res.addObjects("user", user);
-			} else if (friendService.isFriend(userId, token.getUserId())) {
+			if (StringUtils.equals(userId, token.getUserId())
+					|| friendService.isFriend(userId, token.getUserId())) {
 				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(0);
 				res.addObjects("user", user);
@@ -247,5 +242,55 @@ public class UserController {
 
 		// 返却する値
 		response.getWriter().print(res.getResponseJson());
+	}
+
+	/**
+	 * フレンド一覧を取得
+	 * 実装は、フレンドに処理を流すだけ
+	 *
+	 * @param userId
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/friends", method=RequestMethod.GET)
+	public void friends(
+			@PathVariable("id") String userId,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		friendController.friends(userId, request, response);
+	}
+
+	/**
+	 * フレンド申請中一覧を取得
+	 * 実装はフレンドに処理を流すだけ
+	 *
+	 * @param userId
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/relating", method=RequestMethod.GET)
+	public void relating(
+			@PathVariable("id") String userId,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		friendController.relating(userId, request, response);
+	}
+
+	/**
+	 * フレンド申請待ち一覧を取得
+	 * 実装はフレンドに処理を流すだけ
+	 *
+	 * @param userId
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/related", method=RequestMethod.GET)
+	public void related(
+			@PathVariable("id") String userId,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		friendController.related(userId, request, response);
 	}
 }
