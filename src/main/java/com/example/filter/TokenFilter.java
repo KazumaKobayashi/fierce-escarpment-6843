@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -28,14 +29,26 @@ public class TokenFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
 			throws ServletException, IOException {
-		// パラメータの取得
+		// セッションからトークンを取り出す
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
 		if (token != null) {
 			chain.doFilter(request, response);
-		} else {
-			// Tokenがない場合はBad Request
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+			return;
 		}
+
+		// パラメータがあった場合歯セッションを作る
+		String tokenString = request.getParameter("token");
+		if (StringUtils.isNotEmpty(tokenString)) {
+			token = loginService.getLoginTokenByToken(tokenString);
+			if (token != null) {
+				request.getSession().setAttribute("token", token);
+				chain.doFilter(request, response);
+				return;
+			}
+		}
+
+		// Tokenが見つからない場合は、Bad request
+		response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 	}
 }

@@ -39,6 +39,7 @@
 		<filter-name>tokenFilter</filter-name>
 		<url-pattern>/users/*</url-pattern>
 		<url-pattern>/groups/*</url-pattern>
+		<url-pattern>/friends/*</url-pattern>
 		<url-pattern>/logout</url-pattern>
 	</filter-mapping>
 

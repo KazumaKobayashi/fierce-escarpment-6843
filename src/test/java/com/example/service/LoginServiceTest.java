@@ -78,18 +78,6 @@ public class LoginServiceTest {
 	}
 
 	/**
-	 * 一度、ログイントークンが発行されているユーザで期限内に発行を試みて例外が出るテスト
-	 *
-	 * @throws UserNotFoundException
-	 * @throws InvalidPasswordException
-	 * @throws LoginTokenExistsException
-	 */
-	@Test(expected=LoginTokenExistsException.class)
-	public void 同一ユーザでログイントークンを発行する() throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException {
-		service.createToken(id, password);
-	}
-
-	/**
 	 * 存在しないユーザでログイントークンを発行を試みて例外がでるテスト
 	 *
 	 * @throws UserNotFoundException
