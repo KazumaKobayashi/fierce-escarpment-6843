@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.LoginTokenNotFoundException;
+import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
+import com.example.service.CoordinateService;
 import com.example.service.LogoutService;
 
 /**
@@ -27,6 +29,8 @@ public class LogoutController {
 
 	@Autowired
 	private LogoutService logoutService;
+	@Autowired
+	private CoordinateService coordinateService;
 
 	/**
 	 * ログアウトする
@@ -47,6 +51,13 @@ public class LogoutController {
 			logoutService.deleteToken(id, password);
 			request.getSession().removeAttribute("token");
 			res.setStatusCode(0);
+			try {
+				coordinateService.update(id, null, null);
+			} catch (UserNotFoundException e) {
+				// 別にこれが成功しなくてもよい
+				// TODO: ロガーの設定
+				e.printStackTrace();
+			}
 		} catch (LoginTokenNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(-1);
@@ -57,7 +68,6 @@ public class LogoutController {
 			res.addErrorMessage(e.toString());
 		}
 		// レスポンスを設定
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }

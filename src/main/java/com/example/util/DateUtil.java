@@ -23,7 +23,7 @@ public final class DateUtil {
 	}
 
 	/**
-	 * 指定されたタイムスタンプが数時間前のものかどうかチェックする
+	 * 指定されたタイムスタンプがhours時間前のものかどうかチェックする
 	 *
 	 * @param timestamp
 	 * @param hours
@@ -32,6 +32,19 @@ public final class DateUtil {
 	public static boolean isTimestampBeforeFewHours(Timestamp timestamp, int hours) {
 		Calendar cal = Calendar.getInstance();
 		cal.add(Calendar.HOUR, -hours);
+		return timestamp.before(cal.getTime());
+	}
+
+	/**
+	 * 指定されたタイムスタンプがmintues分前のものかどうかをチェクする
+	 *
+	 * @param timestamp
+	 * @param minutes
+	 * @return
+	 */
+	public static boolean isTimestampBeforeFewMinutes(Timestamp timestamp, int minutes) {
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.MINUTE, -minutes);
 		return timestamp.before(cal.getTime());
 	}
 }

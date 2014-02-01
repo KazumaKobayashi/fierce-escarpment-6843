@@ -79,7 +79,8 @@ public class GroupControllerTest extends AbstractControllerTest {
 	//条件と合致しているか(andExpect)
 	@Test
 	public void グループ情報を取得する() throws Exception{
-		mockMvc.perform(get("/groups/" + id + "/info"))//urlへのgetリクエスト
+		mockMvc.perform(get("/groups/" + id + "/info")
+				.session(mockSession))//urlへのgetリクエスト
 			.andExpect(status().isOk())//statusが200(OK)になって返ってきてるか
 			.andExpect(content().contentType("application/json"))//contentが指定されたcontentTypeで作成されているか
 			//TODO:正しいステータスコードを設定のこと
@@ -107,7 +108,8 @@ public class GroupControllerTest extends AbstractControllerTest {
 	@Test
 	public void グループ情報を更新する() throws Exception {
 		mockMvc.perform(put("/groups/" + id + "/info")//urlへのputリクエスト
-						.param("name",name))
+						.param("name",name)
+						.session(mockSession))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			//TODO: 正しいステータスコードを設定のこと

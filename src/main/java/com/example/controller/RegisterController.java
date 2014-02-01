@@ -65,7 +65,6 @@ public class RegisterController {
 		}
 
 		// レスポンスの設定
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }

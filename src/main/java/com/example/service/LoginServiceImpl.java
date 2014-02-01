@@ -53,7 +53,7 @@ public class LoginServiceImpl implements LoginService {
 		// ログイントークンの存在チェク
 		LoginToken token = getLoginToken(userId);
 		if (token != null) {
-			if (!DateUtil.isTimestampBeforeFewHours(token.getUpdatedAt(), 1)) {
+			if (!DateUtil.isTimestampBeforeFewMinutes(token.getUpdatedAt(), 0)) {
 				// 存在する場合はエラー
 				throw new LoginTokenExistsException("Login token already exists. Token: " + token.getToken());
 			} else {

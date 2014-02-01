@@ -20,6 +20,7 @@ import com.example.model.Coordinate;
 import static org.junit.Assert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.hamcrest.core.IsNull.nullValue;
 
 /**
  * CoordinateServiceのテスト
@@ -55,8 +56,8 @@ public class CoordinateServiceTest {
 		Coordinate coord = service.getCoordinate(id);
 		assertThat(coord, is(notNullValue()));
 		assertThat(coord.getUserId(), is(id));
-		assertThat(coord.getLat(), is(0.0));
-		assertThat(coord.getLng(), is(0.0));
+		assertThat(coord.getLat(), is(nullValue()));
+		assertThat(coord.getLng(), is(nullValue()));
 	}
 
 	/**
@@ -67,8 +68,8 @@ public class CoordinateServiceTest {
 	@Test
 	public void 座標情報を更新する() throws UserNotFoundException {
 		Coordinate coord = service.getCoordinate(id);
-		assertThat(coord.getLat(), is(0.0));
-		assertThat(coord.getLng(), is(0.0));
+		assertThat(coord.getLat(), is(nullValue()));
+		assertThat(coord.getLng(), is(nullValue()));
 
 		// 座標を更新
 		Double lat = 45.123, lng = 57.438;

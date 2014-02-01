@@ -35,6 +35,93 @@ public class FriendController {
 	private LoginService loginService;
 
 	/**
+	 * フレンド一覧を取得
+	 *
+	 * @param id
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/", method=RequestMethod.GET)
+	public void friends(
+			@PathVariable("id") String id,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
+		if (StringUtils.equals(token.getUserId(), id)) {
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+			res.addObjects("friends", friendService.getFriendList(id));
+		} else {
+			// 自身でなければNotFoundを返す
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+
+		// 返却する値を設定する
+		response.getWriter().println(res.getResponseJson());
+	}
+
+	/**
+	 * フレンド申請中一覧を取得
+	 *
+	 * @param id
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/relating", method=RequestMethod.GET)
+	public void relating(
+			@PathVariable("id") String id,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
+		if (StringUtils.equals(token.getUserId(), id)) {
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+			res.addObjects("relating", friendService.getRelatingList(id));
+		} else {
+			// 自身でなければNotFoundを返す
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+
+		// 返却する値を設定する
+		response.getWriter().println(res.getResponseJson());
+	}
+
+	/**
+	 * フレンド申請待ち一覧を取得
+	 *
+	 * @param id
+	 * @param request
+	 * @param response
+	 * @throws IOException
+	 */
+	@RequestMapping(value="/{id}/related", method=RequestMethod.GET)
+	public void related(
+			@PathVariable("id") String id,
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
+
+		if (StringUtils.equals(token.getUserId(), id)) {
+			// TODO: 正しいステータスコードを設定のこと
+			res.setStatusCode(0);
+			res.addObjects("related", friendService.getRelatedList(id));
+		} else {
+			// 自身でなければNotFoundを返す
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		}
+
+		// 返却する値を設定する
+		response.getWriter().println(res.getResponseJson());
+	}
+
+	/**
 	 * フレンド申請
 	 *
 	 * @param id
@@ -63,7 +150,6 @@ public class FriendController {
 		}
 
 		// 返却する値を設定する
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -99,7 +185,6 @@ public class FriendController {
 		}
 
 		// 返却する値を設定する
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -128,7 +213,6 @@ public class FriendController {
 		}
 
 		// 返却する値を設定する
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }

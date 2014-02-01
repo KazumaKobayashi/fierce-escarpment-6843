@@ -23,6 +23,7 @@
 	</bean>
 
 	<bean id="tokenFilter" class="com.example.filter.TokenFilter" />
+	<bean id="responseFilter" class="com.example.filter.ResponseFilter" />
 
 	<tx:annotation-driven />
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

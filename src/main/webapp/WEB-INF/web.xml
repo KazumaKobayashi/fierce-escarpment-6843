@@ -31,7 +31,6 @@
 		<url-pattern>/</url-pattern>
 	</servlet-mapping>
 
-	<!-- TODO: 仕様が決まり次第、url-patternを変更する -->
 	<filter>
 		<filter-name>tokenFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -41,5 +40,14 @@
 		<url-pattern>/users/*</url-pattern>
 		<url-pattern>/groups/*</url-pattern>
 		<url-pattern>/logout</url-pattern>
+	</filter-mapping>
+
+	<filter>
+		<filter-name>responseFilter</filter-name>
+		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>responseFilter</filter-name>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 </web-app>

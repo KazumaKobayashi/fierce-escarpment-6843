@@ -50,7 +50,6 @@ public class GroupController {
 			res.addErrorMessage(e.toString());
 		}
 		//返却する値
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -80,7 +79,6 @@ public class GroupController {
 		res.setStatusCode(-1);
 		}
 		//返却する値
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 
@@ -112,7 +110,6 @@ public class GroupController {
 			res.addErrorMessage(e.toString());
 		}
 		//レスポンスの設定
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());	
 	}
 	
@@ -144,7 +141,6 @@ public class GroupController {
 		}
 		
 		//レスポンスの設定
-		response.setContentType("application/json");
 		response.getWriter().print(res.getResponseJson());
 	}
 }
