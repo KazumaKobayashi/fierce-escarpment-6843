@@ -7,11 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
+import com.jayway.jsonpath.JsonPath;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -34,6 +34,8 @@ public class LogoutControllerTest extends AbstractControllerTest {
 	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
 
+	private String token;
+
 	@Before
 	public void setup() throws Exception {
 		super.setup();
@@ -50,15 +52,15 @@ public class LogoutControllerTest extends AbstractControllerTest {
 			.andExpect(jsonPath("$.user.name").value(id))
 			.andExpect(jsonPath("$.user.email").value(email));
 		// ログイントークン発行
-		mockMvc.perform(post("/login")
+		MvcResult result = mockMvc.perform(post("/login")
 						.param("id", id)
-						.param("password", password)
-						.session(mockSession))
+						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0))
 			.andReturn();
+		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 	}
 
 	/**
@@ -71,11 +73,10 @@ public class LogoutControllerTest extends AbstractControllerTest {
 		mockMvc.perform(delete("/logout")
 						.param("id", id)
 						.param("password", password)
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: 正しいステータスコードを設定のこと
 			.andExpect(jsonPath("$.code").value(0));
-		assertThat(mockSession.getAttribute("token"), is(nullValue()));
 	}
 }
