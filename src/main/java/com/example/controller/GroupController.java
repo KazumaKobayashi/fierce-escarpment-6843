@@ -17,6 +17,7 @@ import com.example.jackson.Response;
 import com.example.model.Group;
 import com.example.model.LoginToken;
 import com.example.service.GroupService;
+import com.example.util.StatusCodeUtil;
 /**
  * グループに関するコントローラ
  * 
@@ -42,11 +43,11 @@ public class GroupController {
 		try {
 			Group group = groupService.getGroup(groupId);
 			//TODO:正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("group",group);
 		} catch (GroupNotFoundException e) {
 			//TODO:正しいエラーコードを設定のこと(Excepitonを対応したものを作成し割り当てる)
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 		//返却する値
@@ -74,9 +75,9 @@ public class GroupController {
 			res.setStatusCode(0);
 			res.addObjects("group",group);
 		
-		} catch(Exception e){
+		} catch(GroupNotFoundException e){
 			//TODO :正しいエラーコードを設定のこと　また例外を作成する
-		res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 		}
 		//返却する値
 		response.getWriter().print(res.getResponseJson());
@@ -99,16 +100,10 @@ public class GroupController {
 		Response res = new Response();
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 		
-		try {
 			Group group = groupService.create(token.getUserId(),groupname);
 			//TODO:正しいステータスコードを作成し設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("group", group);
-		} catch (Exception e){//例外用のデータを作成しあてはめていく
-			//TODO:正しいステータスコードを作成し設定のこと
-			res.setStatusCode(-1);
-			res.addErrorMessage(e.toString());
-		}
 		//レスポンスの設定
 		response.getWriter().print(res.getResponseJson());	
 	}
@@ -132,11 +127,11 @@ public class GroupController {
 		try{
 			Group group = groupService.join(token.getUserId(),id);
 			//TODO:正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("group",group);
-		}catch(Exception e){
+		}catch(GroupNotFoundException e){
 			//TODO:正しいステータスコードを作成し設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(res.getResponseJson());
 		}
 		

@@ -17,6 +17,7 @@ import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
 import com.example.service.CoordinateService;
 import com.example.service.LogoutService;
+import com.example.util.StatusCodeUtil;
 
 /**
  * ログアウトコントローラ
@@ -50,7 +51,7 @@ public class LogoutController {
 		try {
 			logoutService.deleteToken(id, password);
 			request.getSession().removeAttribute("token");
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			try {
 				coordinateService.update(id, null, null);
 			} catch (UserNotFoundException e) {
@@ -60,11 +61,11 @@ public class LogoutController {
 			}
 		} catch (LoginTokenNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (InvalidPasswordException e) {
 			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 		// レスポンスを設定

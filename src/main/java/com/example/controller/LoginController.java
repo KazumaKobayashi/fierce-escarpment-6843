@@ -17,6 +17,7 @@ import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
 import com.example.model.LoginToken;
 import com.example.service.LoginService;
+import com.example.util.StatusCodeUtil;
 
 /**
  * ログインのコントローラ
@@ -51,19 +52,19 @@ public class LoginController {
 			LoginToken token = loginService.createToken(userId, password);
 			request.getSession().setAttribute("token", token);
 			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("token", token.getToken());
 		} catch (UserNotFoundException e) {
 			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (InvalidPasswordException e) {
 			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (LoginTokenExistsException e) {
 			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 

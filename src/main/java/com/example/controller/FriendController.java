@@ -20,10 +20,11 @@ import com.example.model.FriendRelation;
 import com.example.model.LoginToken;
 import com.example.service.FriendService;
 import com.example.service.LoginService;
+import com.example.util.StatusCodeUtil;
 
 /**
  * フレンド関係のコントローラ
- *
+ *@auther Kazuma Kobayashi
  * @author Kazuki Hasegawa
  */
 @RequestMapping("/friends")
@@ -52,7 +53,7 @@ public class FriendController {
 
 		if (StringUtils.equals(token.getUserId(), id)) {
 			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("friends", friendService.getFriendList(id));
 		} else {
 			// 自身でなければNotFoundを返す
@@ -80,8 +81,7 @@ public class FriendController {
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
 		if (StringUtils.equals(token.getUserId(), id)) {
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("relating", friendService.getRelatingList(id));
 		} else {
 			// 自身でなければNotFoundを返す
@@ -109,8 +109,7 @@ public class FriendController {
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
 		if (StringUtils.equals(token.getUserId(), id)) {
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("related", friendService.getRelatedList(id));
 		} else {
 			// 自身でなければNotFoundを返す
@@ -138,14 +137,12 @@ public class FriendController {
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 		try {
 			friendService.create(token.getUserId(), id);
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 		} catch (FriendRelationExistsException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (UserNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 
@@ -172,15 +169,13 @@ public class FriendController {
 			FriendRelation relation = friendService.getFriendRelation(token.getUserId(), id);
 			if (relation != null && !StringUtils.equals(relation.getPk().getId1(), token.getUserId())) {
 				friendService.allow(token.getUserId(), id);
-				res.setStatusCode(0);
+				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			} else {
 				// 自分で出した申請を許可させるわけにはいかない
-				// TODO: 正しいエラーコードを設定のこと
-				res.setStatusCode(-1);
+				response.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			}
 		} catch (FriendRelationNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 
@@ -205,10 +200,9 @@ public class FriendController {
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 		try {
 			friendService.forbid(token.getUserId(), id);
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 		} catch (FriendRelationNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 
