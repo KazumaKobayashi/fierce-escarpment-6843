@@ -52,7 +52,6 @@ public class FriendController {
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
 		if (StringUtils.equals(token.getUserId(), id)) {
-			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("friends", friendService.getFriendList(id));
 		} else {

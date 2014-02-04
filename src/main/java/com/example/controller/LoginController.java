@@ -51,19 +51,15 @@ public class LoginController {
 		try {
 			LoginToken token = loginService.createToken(userId, password);
 			request.getSession().setAttribute("token", token);
-			// TODO: 正しいステータスコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("token", token.getToken());
 		} catch (UserNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (InvalidPasswordException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (LoginTokenExistsException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}

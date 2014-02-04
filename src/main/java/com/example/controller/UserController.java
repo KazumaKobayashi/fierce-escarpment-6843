@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.exception.CoordinateExistsException;
 import com.example.exception.CoordinateNotFoundException;
 import com.example.exception.FriendRelationNotFoundException;
 import com.example.exception.InvalidPasswordException;
@@ -72,13 +71,10 @@ public class UserController {
 				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 				res.addObjects("user", user);
 			} else {
-				// TODO: 正しいエラーコードを設定のこと(FriendRelationNotFoundExceptionと同じ)
-				
 				res.setStatusCode(StatusCodeUtil.getStatusCode(FriendRelationNotFoundException.class.getClass()));
 			}
 		} else {
-			// TODO: 正しいエラーコードを設定のこと(UserNotFoundExceptionと同じ)
-			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class.getClass()));
+			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class));
 		}
 
 		// 返却する値
@@ -110,16 +106,13 @@ public class UserController {
 		try {
 			if (StringUtils.equals(token.getUserId(), userId)) {
 				User user = userService.update(userId, email, username);
-				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 				res.addObjects("user", user);
 			} else {
 				// ログイントークンが不正だった場合
-				// TODO: 正しいエラーコードを設定のこと
-				res.setStatusCode(StatusCodeUtil.getStatusCode(CoordinateExistsException.class.getClass()));
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 		} catch (UserNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 		}
 
@@ -153,12 +146,10 @@ public class UserController {
 		try {
 			if (StringUtils.equals(token.getUserId(), userId)) {
 				userService.changePassword(userId, currentPassword, newPassword);
-				// TODO: 正しいステータスコードを設定のこと
 				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			} else {
 				// ログイントークンが不正だった場合
-				// TODO: 正しいエラーコードを設定のこと
-				res.setStatusCode(StatusCodeUtil.getStatusCode(CoordinateExistsException.class.getClass()));
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);			
 			}
 		} catch (UserNotFoundException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
@@ -198,10 +189,10 @@ public class UserController {
 				coordinateService.update(userId, lat, lng);
 				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			} else {
+				//ユーザが不正だった場合
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);//自分自身の情報を引き取る等の処理に関してエラーが起きた場合はこれを返す
 			}
 		} catch (UserNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
@@ -233,7 +224,6 @@ public class UserController {
 			res.addObjects("meter", Math.round(meter));
 			res.addObjects("kilometer", meter / 1000.0);
 		} catch (CoordinateNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}

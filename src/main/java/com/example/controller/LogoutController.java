@@ -60,11 +60,9 @@ public class LogoutController {
 				e.printStackTrace();
 			}
 		} catch (LoginTokenNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (InvalidPasswordException e) {
-			// TODO: 正しいエラーコードを設定のこと
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
