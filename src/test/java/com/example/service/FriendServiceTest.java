@@ -198,9 +198,9 @@ public class FriendServiceTest {
 	 */
 	@Test
 	public void フレンド申請中のユーザリスト取得する() {
-		List<User> users = service.getRelatingList(id1);
+		List<String> users = service.getRelatingList(id1);
 		assertThat(users.size(), is(1));
-		assertThat(users.get(0).getId(), is(id2));
+		assertThat(users.get(0), is(id2));
 	}
 
 	/**
@@ -208,9 +208,9 @@ public class FriendServiceTest {
 	 */
 	@Test
 	public void フレンド申請をしてくれているのユーザリスト取得する() {
-		List<User> users = service.getRelatedList(id2);
+		List<String> users = service.getRelatedList(id2);
 		assertThat(users.size(), is(1));
-		assertThat(users.get(0).getId(), is(id1));
+		assertThat(users.get(0), is(id1));
 	}
 
 	/**

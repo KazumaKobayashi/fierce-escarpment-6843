@@ -56,7 +56,7 @@ public interface FriendService {
 	 * @param id
 	 * @return
 	 */
-	public List<User> getRelatingList(String id);
+	public List<String> getRelatingList(String id);
 
 	/**
 	 * 申請が出されているリストを返す
@@ -64,7 +64,7 @@ public interface FriendService {
 	 * @param id
 	 * @return
 	 */
-	public List<User> getRelatedList(String id);
+	public List<String> getRelatedList(String id);
 
 	/**
 	 * フレンド一覧を返す
