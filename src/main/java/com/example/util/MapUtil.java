@@ -1,7 +1,5 @@
 package com.example.util;
 
-import java.math.BigDecimal;
-
 /**
  * 地図系のUtilクラス
  *
@@ -49,29 +47,29 @@ public final class MapUtil {
 		WGS84(6378137.000000, 6356752.314245);
 
 		// 長半径
-		private final BigDecimal a;
+		private final double a;
 		// 第一離心率の２乗数
-		private final BigDecimal e2;
+		private final double e2;
 		// 子午線曲率半径
-		private final BigDecimal mNum;
+		private final double mNum;
 
 		private EllipsoidBody(double a, double b) {
-			this.a = new BigDecimal(a);
-			BigDecimal e = new BigDecimal(Math.sqrt((a * a - b * b) / (a * a)));
-			this.e2 = e.pow(2);
-			this.mNum = this.a.multiply(new BigDecimal(1 - this.e2.doubleValue()));
+			this.a = a;
+			double e = Math.sqrt((a * a - b * b) / (a * a));
+			this.e2 = e * e;
+			this.mNum = this.a * (1 - this.e2);
 		}
 
 		private double getA() {
-			return a.doubleValue();
+			return a;
 		}
 
 		private double getE2() {
-			return e2.doubleValue();
+			return e2;
 		}
 
 		private double getMNum() {
-			return mNum.doubleValue();
+			return mNum;
 		}
 	}
 }
