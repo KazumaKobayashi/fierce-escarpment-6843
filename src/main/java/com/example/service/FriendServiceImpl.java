@@ -155,16 +155,16 @@ public class FriendServiceImpl implements FriendService {
 
 	@Transactional
 	@Override
-	public List<User> getRelatingList(String id) {
-		TypedQuery<User> query = em.createQuery("select u from FriendRelation fr inner join fr.user2 u where fr.pk.id1 = :id and fr.allowed = false", User.class);
+	public List<String> getRelatingList(String id) {
+		TypedQuery<String> query = em.createQuery("select u.id from FriendRelation fr inner join fr.user2 u where fr.pk.id1 = :id and fr.allowed = false", String.class);
 		query.setParameter("id", id);
 		return query.getResultList();
 	}
 
 	@Transactional
 	@Override
-	public List<User> getRelatedList(String id) {
-		TypedQuery<User> query = em.createQuery("select u from FriendRelation fr inner join fr.user1 u where fr.pk.id2 = :id and fr.allowed = false", User.class);
+	public List<String> getRelatedList(String id) {
+		TypedQuery<String> query = em.createQuery("select u.id from FriendRelation fr inner join fr.user1 u where fr.pk.id2 = :id and fr.allowed = false", String.class);
 		query.setParameter("id", id);
 		return query.getResultList();
 	}
