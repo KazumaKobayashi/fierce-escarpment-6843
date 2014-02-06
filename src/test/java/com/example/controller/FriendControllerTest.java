@@ -1,13 +1,8 @@
 package com.example.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +14,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.util.StatusCodeUtil;
 import com.jayway.jsonpath.JsonPath;
 
 /**
@@ -52,8 +48,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: Successコードと比較
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.name").value(id))
 			.andExpect(jsonPath("$.user.email").value(email));
@@ -63,8 +58,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andReturn();
 		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 
@@ -75,14 +69,13 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 		result = mockMvc.perform(post("/login")
 						.param("id", otherId)
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andReturn();
 		otherToken = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 	}
@@ -100,16 +93,14 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンドを取得する
 		mockMvc.perform(get("/friends/" + id + "/")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.friends", hasSize(0)));
 	}
 
@@ -126,24 +117,21 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + id + "/approve")
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンドを取得する
 		mockMvc.perform(get("/friends/" + id + "/")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.friends", hasSize(1)));
 	}
 
@@ -173,16 +161,14 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請中一覧を取得する
 		mockMvc.perform(get("/friends/" + id + "/relating")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.relating", hasSize(1)));
 	}
 
@@ -199,24 +185,21 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + id + "/approve")
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請中一覧を取得する
 		mockMvc.perform(get("/friends/" + id + "/relating")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.relating", hasSize(0)));
 	}
 
@@ -245,16 +228,14 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請中一覧を取得する
 		mockMvc.perform(get("/friends/" + id + "/related")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.related", hasSize(1)));
 	}
 
@@ -271,24 +252,21 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + otherId + "/approve")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請中一覧を取得する
 		mockMvc.perform(get("/friends/" + id + "/related")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.related", hasSize(0)));
 	}
 
@@ -316,8 +294,7 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 
 	/**
@@ -332,16 +309,14 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + id + "/approve")
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 
 	/**
@@ -357,16 +332,13 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + otherId + "/approve")
 						.param("token", token))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(-1));
+			.andExpect(status().isBadRequest())
+			.andExpect(content().contentType("application/json"));
 	}
 
 	/**
@@ -381,16 +353,14 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を却下する
 		mockMvc.perform(delete("/friends/" + id + "/unapprove")
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 
 	/**
@@ -405,15 +375,13 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を却下する
 		mockMvc.perform(delete("/friends/" + otherId + "/unapprove")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 }

@@ -17,10 +17,11 @@ import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
 import com.example.service.CoordinateService;
 import com.example.service.LogoutService;
+import com.example.util.StatusCodeUtil;
 
 /**
  * ログアウトコントローラ
- *
+ * @author Kazuma Kobayashi
  * @author Kazuki Hasegawa
  */
 @RequestMapping("/logout")
@@ -43,14 +44,13 @@ public class LogoutController {
 	@RequestMapping(method=RequestMethod.DELETE)
 	public void logout(
 			@RequestParam("id") String id,
-			@RequestParam("password") String password,
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
-			logoutService.deleteToken(id, password);
+			logoutService.deleteToken(id);
 			request.getSession().removeAttribute("token");
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			try {
 				coordinateService.update(id, null, null);
 			} catch (UserNotFoundException e) {
@@ -59,12 +59,10 @@ public class LogoutController {
 				e.printStackTrace();
 			}
 		} catch (LoginTokenNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (InvalidPasswordException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 		// レスポンスを設定

@@ -1,5 +1,8 @@
 package com.example.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,13 +13,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.util.StatusCodeUtil;
 import com.jayway.jsonpath.JsonPath;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * LogoutControllerのテスト
@@ -47,7 +45,7 @@ public class LogoutControllerTest extends AbstractControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: Successコードと比較
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.name").value(id))
 			.andExpect(jsonPath("$.user.email").value(email));
@@ -57,8 +55,7 @@ public class LogoutControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andReturn();
 		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 	}
@@ -72,11 +69,9 @@ public class LogoutControllerTest extends AbstractControllerTest {
 	public void ログアウトする() throws Exception {
 		mockMvc.perform(delete("/logout")
 						.param("id", id)
-						.param("password", password)
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 }

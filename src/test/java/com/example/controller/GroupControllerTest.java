@@ -13,6 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.util.StatusCodeUtil;
 import com.jayway.jsonpath.JsonPath;
 
 /**
@@ -44,7 +45,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: Successコードと比較
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(userId))
 			.andExpect(jsonPath("$.user.name").value(userId))
 			.andExpect(jsonPath("$.user.email").value(email));
@@ -54,8 +55,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andReturn();
 		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 
@@ -67,7 +67,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json"))
 				//TODO: Successコードと比較
-				.andExpect(jsonPath("$.code").value(0))
+				.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 				.andExpect(jsonPath("$.group.name").value(name))
 				.andExpect(jsonPath("$.group.owner").value(userId))
 				.andReturn();
@@ -87,8 +87,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 				.param("token", token))//urlへのgetリクエスト
 			.andExpect(status().isOk())//statusが200(OK)になって返ってきてるか
 			.andExpect(content().contentType("application/json"))//contentが指定されたcontentTypeで作成されているか
-			//TODO:正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.group.id").value(id))
 			.andExpect(jsonPath("$.group.name").value(name));
 	}
@@ -99,8 +98,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 								.param("token", token))//urlへのpostリクエスト
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			//TODO:正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.group.id").value(id));
 	}
 	
@@ -116,8 +114,7 @@ public class GroupControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			//TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 }
 
