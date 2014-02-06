@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.exception.CoordinateNotFoundException;
+import com.example.exception.FriendRelationNotFoundException;
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
@@ -23,6 +24,7 @@ import com.example.service.CoordinateService;
 import com.example.service.FriendService;
 import com.example.service.LoginService;
 import com.example.service.UserService;
+import com.example.util.StatusCodeUtil;
 
 /**
  * ユーザに関するコントローラ
@@ -66,16 +68,13 @@ public class UserController {
 		if (user != null) {
 			if (StringUtils.equals(userId, token.getUserId())
 					|| friendService.isFriend(userId, token.getUserId())) {
-				// TODO: 正しいステータスコードを設定のこと
-				res.setStatusCode(0);
+				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 				res.addObjects("user", user);
 			} else {
-				// TODO: 正しいエラーコードを設定のこと(FriendRelationNotFoundExceptionと同じ)
-				res.setStatusCode(-1);
+				res.setStatusCode(StatusCodeUtil.getStatusCode(FriendRelationNotFoundException.class));
 			}
 		} else {
-			// TODO: 正しいエラーコードを設定のこと(UserNotFoundExceptionと同じ)
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class));
 		}
 
 		// 返却する値
@@ -107,17 +106,14 @@ public class UserController {
 		try {
 			if (StringUtils.equals(token.getUserId(), userId)) {
 				User user = userService.update(userId, email, username);
-				// TODO: 正しいステータスコードを設定のこと
-				res.setStatusCode(0);
+				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 				res.addObjects("user", user);
 			} else {
 				// ログイントークンが不正だった場合
-				// TODO: 正しいエラーコードを設定のこと
-				res.setStatusCode(-1);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			}
 		} catch (UserNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 		}
 
 		// 返却する値
@@ -150,19 +146,15 @@ public class UserController {
 		try {
 			if (StringUtils.equals(token.getUserId(), userId)) {
 				userService.changePassword(userId, currentPassword, newPassword);
-				// TODO: 正しいステータスコードを設定のこと
-				res.setStatusCode(0);
+				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			} else {
 				// ログイントークンが不正だった場合
-				// TODO: 正しいエラーコードを設定のこと
-				res.setStatusCode(-1);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);			
 			}
 		} catch (UserNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class.getClass()));
 		} catch (InvalidPasswordException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 		}
 		// 返却する値
 		response.getWriter().print(res.getResponseJson());
@@ -195,16 +187,13 @@ public class UserController {
 		try {
 			if (StringUtils.equals(token.getUserId(), userId)) {
 				coordinateService.update(userId, lat, lng);
-				// TODO: 正しいステータスコードを設定のこと
-				res.setStatusCode(0);
+				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			} else {
-				// ログイントークンが不正だった場合
-				// TODO: 正しいエラーコードを設定のこと
-				res.setStatusCode(-1);
+				//ログインユーザが不正だった場合
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);//自分自身の情報を引き取る等の処理に関してエラーが起きた場合はこれを返す
 			}
 		} catch (UserNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 
@@ -231,12 +220,11 @@ public class UserController {
 
 		try {
 			double meter = Math.floor(coordinateService.getDistanceBetween(userId, token.getUserId()));
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("meter", Math.round(meter));
 			res.addObjects("kilometer", meter / 1000.0);
 		} catch (CoordinateNotFoundException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 

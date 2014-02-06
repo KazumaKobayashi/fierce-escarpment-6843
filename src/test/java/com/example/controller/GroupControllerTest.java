@@ -13,6 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.util.StatusCodeUtil;
 import com.jayway.jsonpath.JsonPath;
 
 /**
@@ -31,6 +32,8 @@ public class GroupControllerTest extends AbstractControllerTest {
 	private String userId = "Hasegawa";
 	private String email = "hasegawa@hentai.jp";
 	private String password = "123";
+
+	private String token;
 	
 	@Before
 	public void setup() throws Exception {
@@ -42,28 +45,29 @@ public class GroupControllerTest extends AbstractControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: Successコードと比較
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(userId))
 			.andExpect(jsonPath("$.user.name").value(userId))
 			.andExpect(jsonPath("$.user.email").value(email));
 		// ログイントークン発行
-		mockMvc.perform(post("/login")
+		MvcResult result = mockMvc.perform(post("/login")
 						.param("id", userId)
-						.param("password", password)
-						.session(mockSession))
+						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
+			.andReturn();
+		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
+
 		//グループ登録
-		MvcResult result
+		result
 			= mockMvc.perform(post("/groups/create")//urlへのpostリクエスト
 							.param("name", name)
-							.session(mockSession))
+							.param("token", token))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json"))
 				//TODO: Successコードと比較
-				.andExpect(jsonPath("$.code").value(0))
+				.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 				.andExpect(jsonPath("$.group.name").value(name))
 				.andExpect(jsonPath("$.group.owner").value(userId))
 				.andReturn();
@@ -80,11 +84,10 @@ public class GroupControllerTest extends AbstractControllerTest {
 	@Test
 	public void グループ情報を取得する() throws Exception{
 		mockMvc.perform(get("/groups/" + id + "/info")
-				.session(mockSession))//urlへのgetリクエスト
+				.param("token", token))//urlへのgetリクエスト
 			.andExpect(status().isOk())//statusが200(OK)になって返ってきてるか
 			.andExpect(content().contentType("application/json"))//contentが指定されたcontentTypeで作成されているか
-			//TODO:正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.group.id").value(id))
 			.andExpect(jsonPath("$.group.name").value(name));
 	}
@@ -92,11 +95,10 @@ public class GroupControllerTest extends AbstractControllerTest {
 	@Test
 	public void グループに参加させる() throws Exception{
 		mockMvc.perform(post("/groups/" + id + "/join")
-								.session(mockSession))//urlへのpostリクエスト
+								.param("token", token))//urlへのpostリクエスト
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			//TODO:正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.group.id").value(id));
 	}
 	
@@ -109,11 +111,10 @@ public class GroupControllerTest extends AbstractControllerTest {
 	public void グループ情報を更新する() throws Exception {
 		mockMvc.perform(put("/groups/" + id + "/info")//urlへのputリクエスト
 						.param("name",name)
-						.session(mockSession))
+						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			//TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 }
 

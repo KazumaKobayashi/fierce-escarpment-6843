@@ -14,8 +14,7 @@ public interface LogoutService {
 	 * 実際の挙動は、LoginTokenを削除する
 	 *
 	 * @param id
-	 * @param password
 	 * @throws InvalidPasswordException 
 	 */
-	public void deleteToken(String id, String password) throws LoginTokenNotFoundException, InvalidPasswordException;
+	public void deleteToken(String id) throws LoginTokenNotFoundException, InvalidPasswordException;
 }

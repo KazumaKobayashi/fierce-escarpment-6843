@@ -16,6 +16,7 @@ import com.example.exception.UserExistsException;
 import com.example.jackson.Response;
 import com.example.model.User;
 import com.example.service.UserService;
+import com.example.util.StatusCodeUtil;
 
 /**
  * 登録用のコントローラ
@@ -47,20 +48,16 @@ public class RegisterController {
 		Response res = new Response();
 		try {
 			User user = userService.create(userId, email, password);
-			// TODO: 正しいステータスコードを設定のこと
-			res.setStatusCode(0);
+			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			res.addObjects("user", user);
 		} catch (UserExistsException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (InvalidEmailException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		} catch (EmailExistsException e) {
-			// TODO: 正しいエラーコードを設定のこと
-			res.setStatusCode(-1);
+			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
 		}
 

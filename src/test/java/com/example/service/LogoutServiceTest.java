@@ -1,5 +1,9 @@
 package com.example.service;
 
+import static org.hamcrest.core.Is.*;
+import static org.hamcrest.core.IsNull.*;
+import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,14 +22,9 @@ import com.example.exception.UserExistsException;
 import com.example.exception.UserNotFoundException;
 import com.example.model.LoginToken;
 
-import static org.junit.Assert.assertThat;
-import static org.hamcrest.core.Is.is;
-import static org.hamcrest.core.IsNull.nullValue;
-import static org.hamcrest.core.IsNull.notNullValue;
-
 /**
  * LogoutServiceのテスト
- *
+ * @author Kazuma Kobayashi
  * @author Kazuki Hasegawa
  * @see com.example.service.LogoutService
  */
@@ -69,7 +68,7 @@ public class LogoutServiceTest {
 		assertThat(token.getUserId(), is(id));
 
 		// ログイントークンの削除
-		service.deleteToken(id, password);
+		service.deleteToken(id);
 
 		// 再取得
 		token = loginService.getLoginToken(id);
@@ -84,7 +83,7 @@ public class LogoutServiceTest {
 	 */
 	@Test(expected=LoginTokenNotFoundException.class)
 	public void 存在しないログイントークンを削除する() throws LoginTokenNotFoundException, InvalidPasswordException {
-		service.deleteToken(id, password);
+		service.deleteToken(id);
 	}
 
 	/**
@@ -96,15 +95,15 @@ public class LogoutServiceTest {
 	 * @throws LoginTokenNotFoundException
 	 */
 	@Test(expected=InvalidPasswordException.class)
-	public void 不正なパスワードでログイントークンを削除する() throws UserNotFoundException, InvalidPasswordException, LoginTokenExistsException, LoginTokenNotFoundException {
+	public void 不正なパスワードでログイントークンを削除する() throws UserNotFoundException,InvalidPasswordException, LoginTokenExistsException, LoginTokenNotFoundException {
 		// ログイントークンの発行
-		loginService.createToken(id, password);
+		loginService.createToken(id, "aaaaaa"/*password*/);
 		// ログイントークンのチェック
 		LoginToken token = loginService.getLoginToken(id);
 		assertThat(token, is(notNullValue()));
 		assertThat(token.getUserId(), is(id));
 
 		// ログイントークンの削除
-		service.deleteToken(id, "");
+		service.deleteToken(id);
 	}
 }
