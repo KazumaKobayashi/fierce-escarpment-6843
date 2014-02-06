@@ -71,7 +71,7 @@ public class UserController {
 				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 				res.addObjects("user", user);
 			} else {
-				res.setStatusCode(StatusCodeUtil.getStatusCode(FriendRelationNotFoundException.class.getClass()));
+				res.setStatusCode(StatusCodeUtil.getStatusCode(FriendRelationNotFoundException.class));
 			}
 		} else {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class));
@@ -152,7 +152,7 @@ public class UserController {
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);			
 			}
 		} catch (UserNotFoundException e) {
-			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
+			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class.getClass()));
 		} catch (InvalidPasswordException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 		}
@@ -189,7 +189,7 @@ public class UserController {
 				coordinateService.update(userId, lat, lng);
 				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			} else {
-				//ユーザが不正だった場合
+				//ログインユーザが不正だった場合
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);//自分自身の情報を引き取る等の処理に関してエラーが起きた場合はこれを返す
 			}
 		} catch (UserNotFoundException e) {

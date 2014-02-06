@@ -13,7 +13,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.exception.UserExistsException;
+import com.example.exception.FriendRelationNotFoundException;
 import com.example.util.StatusCodeUtil;
 import com.jayway.jsonpath.JsonPath;
 
@@ -48,7 +48,6 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: Successコードと比較
 			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.name").value(id))
@@ -111,7 +110,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(Exception.class)));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(FriendRelationNotFoundException.class)));
 	}
 
 	/**
@@ -239,9 +238,8 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("email", email)
 						.param("name", id)
 						.param("token", otherToken))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
-			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(UserExistsException.class)));
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentType("application/json"));
 	}
 
 	/**
@@ -256,9 +254,8 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("current_password", password)
 						.param("new_password", "kazuma")
 						.param("token", otherToken))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
-			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(UserExistsException.class)));
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentType("application/json"));
 	}
 
 	/**
@@ -273,9 +270,8 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("lat", "0.0")
 						.param("lng", "0.0")
 						.param("token", otherToken))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
-			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(UserExistsException.class)));
+			.andExpect(status().isNotFound())
+			.andExpect(content().contentType("application/json"));
 	}
 
 	/**

@@ -48,7 +48,6 @@ public class FriendControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: Successコードと比較
 			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.name").value(id))
@@ -338,10 +337,8 @@ public class FriendControllerTest extends AbstractControllerTest {
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + otherId + "/approve")
 						.param("token", token))
-			.andExpect(status().isOk())
-			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(Exception.class)));
+			.andExpect(status().isBadRequest())
+			.andExpect(content().contentType("application/json"));
 	}
 
 	/**

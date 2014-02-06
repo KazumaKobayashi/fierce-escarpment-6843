@@ -24,7 +24,7 @@ import com.example.util.StatusCodeUtil;
 
 /**
  * フレンド関係のコントローラ
- *@auther Kazuma Kobayashi
+ * @author Kazuma Kobayashi
  * @author Kazuki Hasegawa
  */
 @RequestMapping("/friends")
