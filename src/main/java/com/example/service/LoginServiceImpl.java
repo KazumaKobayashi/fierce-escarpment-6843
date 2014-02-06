@@ -60,7 +60,7 @@ public class LoginServiceImpl implements LoginService {
 				// 再発行可能時間になっていれば
 				try {
 					// ログイントークンを削除する
-					logoutService.deleteToken(userId, password);
+					logoutService.deleteToken(userId);
 				} catch (LoginTokenNotFoundException e) {
 					// 起こりえるはずがないが一応キャッチする
 					e.printStackTrace();

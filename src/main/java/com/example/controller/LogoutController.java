@@ -21,7 +21,7 @@ import com.example.util.StatusCodeUtil;
 
 /**
  * ログアウトコントローラ
- *
+ * @author Kazuma Kobayashi
  * @author Kazuki Hasegawa
  */
 @RequestMapping("/logout")
@@ -44,12 +44,11 @@ public class LogoutController {
 	@RequestMapping(method=RequestMethod.DELETE)
 	public void logout(
 			@RequestParam("id") String id,
-			@RequestParam("password") String password,
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try {
-			logoutService.deleteToken(id, password);
+			logoutService.deleteToken(id);
 			request.getSession().removeAttribute("token");
 			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 			try {

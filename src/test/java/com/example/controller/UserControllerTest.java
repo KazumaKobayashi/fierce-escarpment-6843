@@ -1,5 +1,8 @@
 package com.example.controller;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,14 +13,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.exception.UserExistsException;
+import com.example.util.StatusCodeUtil;
 import com.jayway.jsonpath.JsonPath;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
 /**
  * UserControllerのテスト
@@ -51,7 +49,7 @@ public class UserControllerTest extends AbstractControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			// TODO: Successコードと比較
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.name").value(id))
 			.andExpect(jsonPath("$.user.email").value(email));
@@ -61,8 +59,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andReturn();
 		token = JsonPath.read(result.getResponse().getContentAsString(), "$.token");
 
@@ -74,8 +71,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 		result = mockMvc.perform(post("/login")
 						.param("id", otherId)
 						.param("password", password))
@@ -97,8 +93,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.email").value(email))
 			.andExpect(jsonPath("$.user.name").value(id));
@@ -116,8 +111,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(-1));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(Exception.class)));
 	}
 
 	/**
@@ -132,23 +126,20 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// フレンド申請を許可する
 		mockMvc.perform(put("/friends/" + id + "/approve")
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		mockMvc.perform(get("/users/" + id + "/info")
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.email").value(email))
 			.andExpect(jsonPath("$.user.name").value(id));
@@ -167,8 +158,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 
 	/**
@@ -184,8 +174,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 
 	/**
@@ -201,8 +190,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 
 	/**
@@ -219,8 +207,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 		// 座標更新（八王子みなみ野駅）
 		mockMvc.perform(put("/users/" + otherId + "/coordinate")
 						.param("lat", "35.631364")
@@ -228,16 +215,14 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 
 		// otherIdのユーザとの距離を求める距離取得
 		mockMvc.perform(get("/users/" + otherId + "/coordinate/diff")
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0))
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.meter").value(942))
 			.andExpect(jsonPath("$.kilometer").value(0.942));
 	}
@@ -256,8 +241,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいエラーコードを設定すること
-			.andExpect(jsonPath("$.code").value(-1));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(UserExistsException.class)));
 	}
 
 	/**
@@ -274,8 +258,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいエラーコードを設定すること
-			.andExpect(jsonPath("$.code").value(-1));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(UserExistsException.class)));
 	}
 
 	/**
@@ -292,8 +275,7 @@ public class UserControllerTest extends AbstractControllerTest {
 						.param("token", otherToken))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいエラーコードを設定すること
-			.andExpect(jsonPath("$.code").value(-1));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getStatusCode(UserExistsException.class)));
 	}
 
 	/**
@@ -308,8 +290,7 @@ public class UserControllerTest extends AbstractControllerTest {
 							.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: 正しいステータスコードを設定のこと
-			.andExpect(jsonPath("$.code").value(0));
+			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()));
 	}
 
 	/**
