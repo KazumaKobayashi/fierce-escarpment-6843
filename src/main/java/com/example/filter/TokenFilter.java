@@ -37,7 +37,7 @@ public class TokenFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		// パラメータがあった場合歯セッションを作る
+		// パラメータがあった場合はセッションを作る
 		String tokenString = request.getParameter("token");
 		if (StringUtils.isNotEmpty(tokenString)) {
 			token = loginService.getLoginTokenByToken(tokenString);
@@ -48,7 +48,7 @@ public class TokenFilter extends OncePerRequestFilter {
 			}
 		}
 
-		// Tokenが見つからない場合は、Bad request
-		response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		// Tokenが見つからない場合は、Unauthorized
+		response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 	}
 }
