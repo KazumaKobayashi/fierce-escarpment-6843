@@ -41,7 +41,7 @@ public class Join {
 		this.group = group;
 	}
 
-	public void setFlag(boolean flag){
+	public void setDisplayFlag(boolean flag){
 		this.displayFlag = flag;
 	}
 	
