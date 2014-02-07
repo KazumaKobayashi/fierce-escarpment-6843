@@ -9,6 +9,8 @@ import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +32,8 @@ import com.example.util.PasswordUtil;
  */
 @Service
 public class LoginServiceImpl implements LoginService {
+	private static final Logger logger = LoggerFactory.getLogger(LoginServiceImpl.class);
+
 	@Autowired
 	private UserService userService;
 	@Autowired
@@ -44,10 +48,12 @@ public class LoginServiceImpl implements LoginService {
 		// ユーザの存在チェック
 		User user = userService.getUser(userId);
 		if (user == null) {
+			logger.error("User not found. Id: {}", userId);
 			throw new UserNotFoundException("User not found. Id: " + userId);
 		}
 		// パスワードの妥当性チェック
 		if (!StringUtils.equals(PasswordUtil.getPasswordHash(userId, password), user.getPassword())) {
+			logger.error("Invalid password. Id: {}", userId);
 			throw new InvalidPasswordException("Invalid password. Id:" + userId);
 		}
 		// ログイントークンの存在チェク
@@ -55,6 +61,7 @@ public class LoginServiceImpl implements LoginService {
 		if (token != null) {
 			if (!DateUtil.isTimestampBeforeFewMinutes(token.getUpdatedAt(), 0)) {
 				// 存在する場合はエラー
+				logger.error("Login token already exists. Token: {} Id: {}", token.getToken(), token.getUserId());
 				throw new LoginTokenExistsException("Login token already exists. Token: " + token.getToken());
 			} else {
 				// 再発行可能時間になっていれば
@@ -63,7 +70,7 @@ public class LoginServiceImpl implements LoginService {
 					logoutService.deleteToken(userId);
 				} catch (LoginTokenNotFoundException e) {
 					// 起こりえるはずがないが一応キャッチする
-					e.printStackTrace();
+					logger.error(e.getMessage());
 				}
 			}
 		}

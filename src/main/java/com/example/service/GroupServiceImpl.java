@@ -4,6 +4,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,18 +25,18 @@ import com.example.util.EscapeUtil;
  */
 @Service
 public class GroupServiceImpl implements GroupService{
-	
+	private static final Logger logger = LoggerFactory.getLogger(GroupServiceImpl.class);
+
 	@Autowired
 	private CoordinateService coordinateService;
 
 	@PersistenceContext
 	EntityManager em;
-	
+
 	@Transactional
 	@Override
 	public Group create(String userId, String name){
 		name = EscapeUtil.escapeSQL(name);
-		// TODO: グループの存在確認
 
 		//グループ登録
 		Group group = new Group();
@@ -44,11 +46,12 @@ public class GroupServiceImpl implements GroupService{
 		return group;
 	}
 
+	@Transactional
 	public Group update(Integer groupId,String name) throws GroupNotFoundException{
 		Group group = em.find(Group.class,groupId);
 		if(group == null){
-			throw new GroupNotFoundException("Group not found Id:"+groupId);
-				// TODO: 存在しない例外処理
+			logger.error("Group not found Id: {}", groupId);
+			throw new GroupNotFoundException("Group not found Id: " + groupId);
 		}
 		
 		if(StringUtils.isNotBlank(name)){//nullではないかつスペースのみの文字列ではない場合。　Blank　= 空白
@@ -58,11 +61,12 @@ public class GroupServiceImpl implements GroupService{
 		return group;
 	}
 
-	public Group join(String userId,Integer groupId) throws GroupNotFoundException{
+	@Transactional
+	public Group join(String userId, Integer groupId) throws GroupNotFoundException{
 		Group group = em.find(Group.class,groupId);
-		if( group == null){
-			throw new GroupNotFoundException("Group not found Id:"+groupId);
-				// TODO:存在しない例外処理
+		if(group == null){
+			logger.error("Group not found Id: {}", groupId);
+			throw new GroupNotFoundException("Group not found Id:" + groupId);
 		}
 		
 		Join join = new Join();
@@ -76,10 +80,11 @@ public class GroupServiceImpl implements GroupService{
 		
 		return group;
 	}
-	public Group getGroup(Integer groupId) throws GroupNotFoundException{
+
+	public Group getGroup(Integer groupId) throws GroupNotFoundException {
 		if(groupId == null){
+			logger.error("Group not found Id: {}", groupId);
 			throw new GroupNotFoundException("Group not found Id:"+groupId);
-			// TODO: 存在しない例外処理
 		}
 		return em.find(Group.class, groupId);
 	}

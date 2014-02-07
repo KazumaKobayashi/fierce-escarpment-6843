@@ -5,6 +5,8 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +29,7 @@ import com.example.util.StatusCodeUtil;
 @RequestMapping("/logout")
 @Controller
 public class LogoutController {
+	private static final Logger logger = LoggerFactory.getLogger(LogoutController.class);
 
 	@Autowired
 	private LogoutService logoutService;
@@ -55,15 +58,16 @@ public class LogoutController {
 				coordinateService.update(id, null, null);
 			} catch (UserNotFoundException e) {
 				// 別にこれが成功しなくてもよい
-				// TODO: ロガーの設定
-				e.printStackTrace();
+				logger.warn("Faild coordinate update.");
 			}
 		} catch (LoginTokenNotFoundException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
+			logger.error(e.toString());
 		} catch (InvalidPasswordException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
 			res.addErrorMessage(e.toString());
+			logger.error(e.toString());
 		}
 		// レスポンスを設定
 		response.getWriter().print(res.getResponseJson());

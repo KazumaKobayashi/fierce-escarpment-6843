@@ -55,13 +55,13 @@ public class LoginController {
 			res.addObjects("token", token.getToken());
 		} catch (UserNotFoundException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
-			res.addErrorMessage(e.toString());
+			res.addErrorMessage("ユーザId又はパスワードが異なります。");
 		} catch (InvalidPasswordException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
-			res.addErrorMessage(e.toString());
+			res.addErrorMessage("ユーザId又はパスワードが異なります。");
 		} catch (LoginTokenExistsException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
-			res.addErrorMessage(e.toString());
+			res.addErrorMessage("2重ログインは出来ません。");
 		}
 
 		// レスポンスの設定
