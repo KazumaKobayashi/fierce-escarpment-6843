@@ -19,7 +19,7 @@ public class JoinPK implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="user_id")
+	@Column(name="user_id", length=User.USER_ID_MAX_LENGTH)
 	private String userId;
 
 	@Column(name="group_id")

@@ -29,7 +29,7 @@ public class Coordinate implements Serializable {
 
 	@JsonIgnore
 	@Id
-	@Column(name="usre_id")
+	@Column(name="usre_id", length=User.USER_ID_MAX_LENGTH)
 	private String userId;
 
 	@Column(name="lat")

@@ -19,10 +19,10 @@ public class FriendRelationPK implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	@Column(name="id1")
+	@Column(name="id1", length=User.USER_ID_MAX_LENGTH)
 	private String id1;
 
-	@Column(name="id2")
+	@Column(name="id2", length=User.USER_ID_MAX_LENGTH)
 	private String id2;
 
 	public void setId1(String id1) {

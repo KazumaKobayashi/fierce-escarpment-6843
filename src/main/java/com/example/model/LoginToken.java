@@ -26,10 +26,10 @@ public class LoginToken implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@Column(name="user_id", nullable=false)
+	@Column(name="user_id", nullable=false, length=User.USER_ID_MAX_LENGTH)
 	private String userId;
 
-	@Column(name="login_token", nullable=false, unique=true)
+	@Column(name="login_token", nullable=false, unique=true, length=10)
 	private String token;
 
 	@Column(name="created_at", nullable=false)
