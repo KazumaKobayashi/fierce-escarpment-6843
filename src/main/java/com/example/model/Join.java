@@ -15,13 +15,12 @@ import javax.persistence.Table;
 @Table(name="joins")
 @Entity
 public class Join {
+	@EmbeddedId
+	private JoinPK pk;
 
 	@Column(name="flag")
 	private boolean flag;
 	
-	@EmbeddedId
-	private JoinPK pk;
-
 	@OneToOne
 	@JoinColumn(name="user_id", insertable=false, updatable=false)
 	private User user;
@@ -29,7 +28,6 @@ public class Join {
 	@OneToOne
 	@JoinColumn(name="group_id", insertable=false, updatable=false)
 	private Group group;
-	
 	
 	public void setPk(JoinPK pk) {
 		this.pk = pk;
@@ -57,13 +55,5 @@ public class Join {
 
 	public Group getGroup() {
 		return group;
-	}
-	
-	public boolean getFlagTrue(){
-		return true;
-	}
-	
-	public boolean getFlagFalse(){
-		return false;
 	}
 }
