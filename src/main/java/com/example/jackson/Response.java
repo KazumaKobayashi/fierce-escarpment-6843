@@ -71,6 +71,20 @@ public class Response {
 	}
 
 	/**
+	 * エラーメッセージがあるかどうか
+	 *
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public boolean hasErrors() {
+		if (objects.containsKey("msg")) {
+			List<String> errors = (List<String>) objects.get("msg");
+			return !errors.isEmpty();
+		}
+		return false;
+	}
+
+	/**
 	 * 返却するJson文字列を作成するクラス
 	 * 失敗した場合は空文字
 	 *

@@ -26,7 +26,7 @@ import com.example.util.StatusCodeUtil;
 @WebAppConfiguration
 @ContextConfiguration(locations = "classpath:testContext.xml")
 public class LoginControllerTest extends AbstractControllerTest {
-	private String id = LoginControllerTest.class.getName();
+	private String id = LoginControllerTest.class.getSimpleName();
 	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
 

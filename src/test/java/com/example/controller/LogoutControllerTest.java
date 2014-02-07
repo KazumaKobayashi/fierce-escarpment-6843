@@ -28,7 +28,7 @@ import com.jayway.jsonpath.JsonPath;
 @WebAppConfiguration
 @ContextConfiguration(locations = "classpath:testContext.xml")
 public class LogoutControllerTest extends AbstractControllerTest {
-	private String id = LogoutControllerTest.class.getName();
+	private String id = LogoutControllerTest.class.getSimpleName();
 	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
 
