@@ -5,6 +5,7 @@ import com.example.exception.InvalidEmailException;
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserExistsException;
 import com.example.exception.UserNotFoundException;
+import com.example.jackson.Response;
 import com.example.model.User;
 
 /**
@@ -13,6 +14,16 @@ import com.example.model.User;
  * @author Kazuki Hasegawa
  */
 public interface UserService {
+
+	/**
+	 * ユーザを登録する
+	 *
+	 * @param userId
+	 * @param email
+	 * @param passwod
+	 * @return
+	 */
+	public Response regist(String userId, String email, String password);
 
 	/**
 	 * ユーザを作成する
@@ -24,7 +35,7 @@ public interface UserService {
 	 * @throws InvalidEmailException 
 	 * @throws EmailExistsException 
 	 */
-	public User create(String userId, String email, String password) throws UserExistsException, InvalidEmailException, EmailExistsException;
+	public User create(String userId, String email, String password);
 
 	/**
 	 * ユーザ情報を更新する

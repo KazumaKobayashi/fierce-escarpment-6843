@@ -10,13 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.example.exception.EmailExistsException;
-import com.example.exception.InvalidEmailException;
-import com.example.exception.UserExistsException;
 import com.example.jackson.Response;
-import com.example.model.User;
 import com.example.service.UserService;
-import com.example.util.StatusCodeUtil;
 
 /**
  * 登録用のコントローラ
@@ -45,21 +40,7 @@ public class RegisterController {
 			@RequestParam("password") String password,
 			HttpServletResponse response) throws IOException {
 
-		Response res = new Response();
-		try {
-			User user = userService.create(userId, email, password);
-			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
-			res.addObjects("user", user);
-		} catch (UserExistsException e) {
-			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
-			res.addErrorMessage(e.toString());
-		} catch (InvalidEmailException e) {
-			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
-			res.addErrorMessage(e.toString());
-		} catch (EmailExistsException e) {
-			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
-			res.addErrorMessage(e.toString());
-		}
+		Response res = userService.regist(userId, email, password);
 
 		// レスポンスの設定
 		response.getWriter().print(res.getResponseJson());

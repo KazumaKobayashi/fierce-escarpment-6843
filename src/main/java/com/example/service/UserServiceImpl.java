@@ -2,6 +2,8 @@ package com.example.service;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -15,16 +17,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.exception.CoordinateExistsException;
-import com.example.exception.EmailExistsException;
-import com.example.exception.InvalidEmailException;
 import com.example.exception.InvalidPasswordException;
-import com.example.exception.UserExistsException;
 import com.example.exception.UserNotFoundException;
+import com.example.jackson.Response;
 import com.example.model.User;
-import com.example.util.EmailValidator;
 import com.example.util.DateUtil;
 import com.example.util.EscapeUtil;
 import com.example.util.PasswordUtil;
+import com.example.util.StatusCodeUtil;
 
 /**
  * UserServiceの実装クラス
@@ -42,19 +42,67 @@ public class UserServiceImpl implements UserService {
 	@PersistenceContext
 	EntityManager em;
 
+	// ユーザIdのパターン
+	private static Pattern USER_ID_PATTERN = Pattern.compile("^[0-9a-zA-Z]+$");
+	// メールアドレスのパターン
+	private static Pattern EMAIL_PATTERN = Pattern.compile("^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
+	// パスワードのパターン
+	private static Pattern PASSWORD_PATTERN = Pattern.compile("^[0-9a-zA-Z\\-]+$");
+
 	@Transactional
 	@Override
-	public User create(String userId, String email, String password) throws UserExistsException, InvalidEmailException, EmailExistsException {
-		User user = em.find(User.class, userId);
-		if (user != null) {
-			throw new UserExistsException("User already exists. Id: " + userId);
+	public Response regist(String userId, String email, String password) {
+		Response response = new Response();
+		if (StringUtils.isBlank(userId)) {
+			response.addErrorMessage("ユーザIdを入力してください。");
+		} else if (userId.length() > User.USER_ID_MAX_LENGTH || userId.length() < 6) {
+			response.addErrorMessage(String.format("ユーザIdは、6文字以上%s以内で入力してください。", User.USER_ID_MAX_LENGTH));
+		} else {
+			Matcher matcher = USER_ID_PATTERN.matcher(userId);
+			if (!matcher.matches()) {
+				response.addErrorMessage("不正なユーザIdです。");
+			} else if (em.find(User.class, userId) != null) {
+				response.addErrorMessage("そのユーザIdはすでに使われています。");
+			}
 		}
-		if (EmailValidator.validate(email)) {
-			throw new InvalidEmailException("Invalid email.");
+
+		if (StringUtils.isBlank(email)) {
+			response.addErrorMessage("メールアドレスを入力してください。");
+		} else if (email.length() > User.EMAIL_MAX_LENGTH) {
+			response.addErrorMessage("メールアドレスが長過ぎます。");
+		} else {
+			Matcher matcher = EMAIL_PATTERN.matcher(email);
+			if (!matcher.matches()) {
+				response.addErrorMessage("不正なメールアドレスです。");
+			} else if (getUserByEmail(email) != null) {
+				response.addErrorMessage("そのメールアドレスはすでに使われています。");
+			}
 		}
-		if (getUserByEmail(email) != null) {
-			throw new EmailExistsException("Email already exists. Email: " + email);
+
+		if (StringUtils.isBlank(password)) {
+			response.addErrorMessage("パスワードを入力してください。");
+		} else if (password.length() > 127) {
+			response.addErrorMessage("パスワードが長過ぎます。");
+		} else {
+			Matcher matcher = PASSWORD_PATTERN.matcher(password);
+			if (!matcher.matches()) {
+				response.addErrorMessage("不正なパスワードです。");
+			}
 		}
+
+		if (response.hasErrors()) {
+			// TODO: 正しいエラーコードを設定のこと
+			response.setStatusCode(-1);
+		} else {
+			response.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
+			response.addObjects("user", create(userId, email, password));
+		}
+		return response;
+	}
+
+	@Transactional
+	@Override
+	public User create(String userId, String email, String password) {
 		// エスケープ処理
 		userId = EscapeUtil.escapeSQL(userId);
 		password = EscapeUtil.escapeSQL(password);
@@ -63,7 +111,7 @@ public class UserServiceImpl implements UserService {
 		Timestamp now = DateUtil.getCurrentTimestamp();
 
 		// ユーザ登録
-		user = new User();
+		User user = new User();
 		user.setId(userId);
 		user.setEmail(email);
 		user.setUsername(userId);
@@ -91,7 +139,9 @@ public class UserServiceImpl implements UserService {
 			throw new UserNotFoundException("User not found. Id: " + userId);
 		}
 
-		if (!EmailValidator.validate(email) && getUserByEmail(email) == null) {
+		Matcher matcher = EMAIL_PATTERN.matcher(email);
+		System.out.println(matcher.matches());
+		if (matcher.matches() && getUserByEmail(email) == null) {
 			// 不正でない　かつ　登録されているものでなければ
 			user.setEmail(email);
 		}

@@ -29,7 +29,7 @@ import com.jayway.jsonpath.JsonPath;
 @WebAppConfiguration
 @ContextConfiguration(locations = "classpath:testContext.xml")
 public class FriendControllerTest extends AbstractControllerTest {
-	private String id = UserControllerTest.class.getName();
+	private String id = UserControllerTest.class.getSimpleName();
 	private String email = "example@example.com";
 	private String password = "kazumakobayashi";
 	private String otherId = "kazuma";
