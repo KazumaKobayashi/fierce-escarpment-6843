@@ -29,17 +29,21 @@ public class User implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public static final int USER_ID_MAX_LENGTH = 63;
+	public static final int USER_NAME_MAX_LENGTH = 63;
+	public static final int EMAIL_MAX_LENGTH = 127;
+
 	@JsonProperty("id")
 	@Id
-	@Column(name="id")
+	@Column(name="id", length=USER_ID_MAX_LENGTH)
 	private String id;
 
 	@JsonProperty("email")
-	@Column(name="email", unique=true, nullable=false)
+	@Column(name="email", unique=true, nullable=false, length=EMAIL_MAX_LENGTH)
 	private String email;
 
 	@JsonProperty("name")
-	@Column(name="name", nullable=false)
+	@Column(name="name", nullable=false, length=USER_NAME_MAX_LENGTH)
 	private String username;
 
 	@JsonIgnore

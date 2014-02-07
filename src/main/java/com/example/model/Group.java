@@ -24,6 +24,8 @@ public class Group implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 
+	public static final int GROUP_NAME_MAX_LENGTH = 63;
+
 	@JsonProperty("id")
 	@Id
     @GeneratedValue
@@ -31,11 +33,11 @@ public class Group implements Serializable{
     private Integer id;
 
 	@JsonProperty("name")
-	@Column(name="name", nullable=false)
+	@Column(name="name", nullable=false, length=GROUP_NAME_MAX_LENGTH)
 	private String groupname;
 	
 	@JsonProperty("owner")
-	@Column(name = "owner")
+	@Column(name = "owner", length=User.USER_ID_MAX_LENGTH)
 	private String owner;
 	
 	public void setId(Integer id) {
