@@ -9,6 +9,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +30,8 @@ import com.example.model.User;
  */
 @Service
 public class FriendServiceImpl implements FriendService {
+	private static final Logger logger = LoggerFactory.getLogger(FriendServiceImpl.class);
+
 	@Autowired
 	private UserService userService;
 
@@ -57,8 +61,7 @@ public class FriendServiceImpl implements FriendService {
 				return allow(id2, id1);
 			} catch (FriendRelationNotFoundException e) {
 				// 起こりえるはずがないが一応
-				// TODO: ロガー
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}
 		// 存在確認
@@ -97,6 +100,7 @@ public class FriendServiceImpl implements FriendService {
 			relation = em.find(FriendRelation.class, pk);
 			if (relation == null) {
 				// それでもないなら例外
+				logger.error("FriendRealtion not found. Id1: {} Id2: {}", id1, id2);
 				throw new FriendRelationNotFoundException("FriendRelation not found.");
 			}
 		}
@@ -124,6 +128,7 @@ public class FriendServiceImpl implements FriendService {
 			relation = em.find(FriendRelation.class, pk);
 			if (relation == null) {
 				// それでもないなら例外
+				logger.error("FriendRealtion not found. Id1: {} Id2: {}", id1, id2);
 				throw new FriendRelationNotFoundException("FriendRelation not found.");
 			}
 		}
@@ -150,6 +155,7 @@ public class FriendServiceImpl implements FriendService {
 		if (relation != null) {
 			return relation;
 		}
+		logger.error("FriendRealtion not found. Id1: {} Id2: {}", id1, id2);
 		return null;
 	}
 

@@ -8,6 +8,8 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +34,7 @@ import com.example.util.PasswordUtil;
  */
 @Service
 public class UserServiceImpl implements UserService {
+	private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
 	@Autowired
 	private CoordinateService coordinateService;
@@ -72,12 +75,10 @@ public class UserServiceImpl implements UserService {
 			coordinateService.create(userId, null, null);
 		} catch (CoordinateExistsException e) {
 			// 起こりえるわけがないけど念の為に
-			// TODO: ロガーの追加
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (UserNotFoundException e) {
 			// 起こりえるわけがないけど念の為に
-			// TODO: ロガーの追加
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 		return user;
 	}

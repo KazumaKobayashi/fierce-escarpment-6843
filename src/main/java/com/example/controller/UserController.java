@@ -75,6 +75,7 @@ public class UserController {
 			}
 		} else {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class));
+			res.addErrorMessage("User not found.");
 		}
 
 		// 返却する値
@@ -114,6 +115,7 @@ public class UserController {
 			}
 		} catch (UserNotFoundException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
+			res.addErrorMessage(e.toString());
 		}
 
 		// 返却する値
@@ -153,8 +155,10 @@ public class UserController {
 			}
 		} catch (UserNotFoundException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class.getClass()));
+			res.addErrorMessage(e.toString());
 		} catch (InvalidPasswordException e) {
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
+			res.addErrorMessage(e.toString());
 		}
 		// 返却する値
 		response.getWriter().print(res.getResponseJson());
