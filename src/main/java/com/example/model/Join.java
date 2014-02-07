@@ -1,5 +1,6 @@
 package com.example.model;
 
+import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
@@ -17,6 +18,9 @@ public class Join {
 	@EmbeddedId
 	private JoinPK pk;
 
+	@Column(name="display_flag")
+	private boolean displayFlag;
+	
 	@OneToOne
 	@JoinColumn(name="user_id", insertable=false, updatable=false)
 	private User user;
@@ -24,7 +28,7 @@ public class Join {
 	@OneToOne
 	@JoinColumn(name="group_id", insertable=false, updatable=false)
 	private Group group;
-
+	
 	public void setPk(JoinPK pk) {
 		this.pk = pk;
 	}
@@ -37,6 +41,10 @@ public class Join {
 		this.group = group;
 	}
 
+	public void setDisplayFlag(boolean flag){
+		this.displayFlag = flag;
+	}
+	
 	public JoinPK getPk() {
 		return pk;
 	}
@@ -47,5 +55,9 @@ public class Join {
 
 	public Group getGroup() {
 		return group;
+	}
+
+	public boolean isDisplay(){
+		return displayFlag;
 	}
 }
