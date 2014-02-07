@@ -18,8 +18,8 @@ public class Join {
 	@EmbeddedId
 	private JoinPK pk;
 
-	@Column(name="displayflag")
-	private boolean displayflag;
+	@Column(name="display_flag")
+	private boolean displayFlag;
 	
 	@OneToOne
 	@JoinColumn(name="user_id", insertable=false, updatable=false)
@@ -42,7 +42,7 @@ public class Join {
 	}
 
 	public void setFlag(boolean flag){
-		this.displayflag = flag;
+		this.displayFlag = flag;
 	}
 	
 	public JoinPK getPk() {
@@ -57,7 +57,7 @@ public class Join {
 		return group;
 	}
 
-	public boolean getFlag(){
-		return displayflag;
+	public boolean isDisplay(){
+		return displayFlag;
 	}
 }
