@@ -71,11 +71,13 @@ public class GroupServiceImpl implements GroupService{
 		
 		Join join = new Join();
 		JoinPK pk = new JoinPK();
+		boolean flag = join.getFlagTrue();
 		
 		pk.setUserId(userId);
 		pk.setGroupId(groupId);
-		
+		join.setFlag(flag);
 		join.setPk(pk);
+		
 		em.persist(join);
 		
 		return group;

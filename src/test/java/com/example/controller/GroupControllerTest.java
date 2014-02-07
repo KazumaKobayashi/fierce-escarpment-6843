@@ -44,7 +44,6 @@ public class GroupControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: Successコードと比較
 			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(userId))
 			.andExpect(jsonPath("$.user.name").value(userId))
@@ -66,7 +65,6 @@ public class GroupControllerTest extends AbstractControllerTest {
 							.param("token", token))
 				.andExpect(status().isOk())
 				.andExpect(content().contentType("application/json"))
-				//TODO: Successコードと比較
 				.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 				.andExpect(jsonPath("$.group.name").value(name))
 				.andExpect(jsonPath("$.group.owner").value(userId))

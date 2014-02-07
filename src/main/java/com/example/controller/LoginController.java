@@ -47,7 +47,6 @@ public class LoginController {
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException{
 		Response res = new Response();
-
 		try {
 			LoginToken token = loginService.createToken(userId, password);
 			request.getSession().setAttribute("token", token);

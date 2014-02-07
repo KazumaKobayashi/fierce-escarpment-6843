@@ -54,6 +54,16 @@ public class GroupServiceTest {
 		group = service.getGroup(id);
 		assertThat(group.getGroupname(), is(groupname));
 	}
+	
+	@Test
+	public void  グループに参加する() throws GroupNotFoundException{
+		Group group = service.getGroup(id);
+		assertThat(group.getGroupname(),is(name));
+		
+		//グループに参加
+		service.join("12345", id);
+		
+	}
 	/**
 	 * 存在しないグループを更新を試みて例外が出るテスト
 	 * 
