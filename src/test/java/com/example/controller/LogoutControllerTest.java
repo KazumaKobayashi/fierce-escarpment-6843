@@ -44,7 +44,6 @@ public class LogoutControllerTest extends AbstractControllerTest {
 						.param("password", password))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
-			// TODO: Successコードと比較
 			.andExpect(jsonPath("$.code").value(StatusCodeUtil.getSuccessStatusCode()))
 			.andExpect(jsonPath("$.user.id").value(id))
 			.andExpect(jsonPath("$.user.name").value(id))
@@ -68,7 +67,6 @@ public class LogoutControllerTest extends AbstractControllerTest {
 	@Test
 	public void ログアウトする() throws Exception {
 		mockMvc.perform(delete("/logout")
-						.param("id", id)
 						.param("token", token))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
