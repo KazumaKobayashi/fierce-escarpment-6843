@@ -11,12 +11,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.example.exception.InvalidPasswordException;
 import com.example.exception.LoginTokenNotFoundException;
 import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
+import com.example.model.LoginToken;
 import com.example.service.CoordinateService;
 import com.example.service.LogoutService;
 import com.example.util.StatusCodeUtil;
@@ -39,18 +39,18 @@ public class LogoutController {
 	/**
 	 * ログアウトする
 	 *
-	 * @param id
-	 * @param password
 	 * @param response
+	 * @param request
 	 * @throws IOException
 	 */
 	@RequestMapping(method=RequestMethod.DELETE)
 	public void logout(
-			@RequestParam("id") String id,
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
+		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 		try {
+			String id = token.getUserId();
 			logoutService.deleteToken(id);
 			request.getSession().removeAttribute("token");
 			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
