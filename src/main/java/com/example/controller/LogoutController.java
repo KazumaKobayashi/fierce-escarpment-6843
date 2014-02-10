@@ -39,8 +39,8 @@ public class LogoutController {
 	/**
 	 * ログアウトする
 	 *
-	 * @param password
 	 * @param response
+	 * @param request
 	 * @throws IOException
 	 */
 	@RequestMapping(method=RequestMethod.DELETE)
