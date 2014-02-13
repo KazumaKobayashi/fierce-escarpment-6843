@@ -160,20 +160,35 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public User changePassword(String userId, String currentPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException {
+	public Response changePassword(String userId, String currentPassword, String newPassword) {
+		Response response = new Response();
 		User user = em.find(User.class, userId);
 		// ユーザ存在確認
 		if (user == null) {
-			throw new UserNotFoundException("User not found. Id: " + userId);
+			response.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class));
+			response.addErrorMessage("ユーザが存在しません。");
+			logger.error("User not found. Id: {}", userId);
+			return response;
 		}
 		// パスワードの妥当性チェック
 		if (!StringUtils.equals(PasswordUtil.getPasswordHash(userId, currentPassword), user.getPassword())) {
-			throw new InvalidPasswordException("Invalid password. Id:" + userId);
+			response.setStatusCode(StatusCodeUtil.getStatusCode(InvalidPasswordException.class));
+			response.addErrorMessage("現在のパスワードが間違っています。");
+			logger.error("Invalid password. Id: {}", userId);
+			return response;
 		}
+		// パスワードの長さチェック
+		if (currentPassword.length() > 127) {
+			response.setStatusCode(StatusCodeUtil.getStatusCode(InvalidPasswordException.class));
+			response.addErrorMessage("新しいパスワードが長過ぎます。");
+			logger.error("Invalid password. Id: {}", userId);
+			return response;
+		}
+		response.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 		String password = PasswordUtil.getPasswordHash(userId, newPassword);
 		user.setPassword(password);
 		em.persist(user);
-		return user;
+		return response;
 	}
 
 	@Transactional

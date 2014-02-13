@@ -2,7 +2,6 @@ package com.example.service;
 
 import com.example.exception.EmailExistsException;
 import com.example.exception.InvalidEmailException;
-import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserExistsException;
 import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
@@ -71,8 +70,7 @@ public interface UserService {
 	 * @param currentPassword
 	 * @param newPassword
 	 * @return
-	 * @throws UserNotFoundException
 	 */
-	public User changePassword(String userId, String currentPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException;
+	public Response changePassword(String userId, String currentPassword, String newPassword);
 
 }
