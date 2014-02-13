@@ -49,11 +49,11 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>TokenFilter</filter-name>
+		<filter-name>tokenFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	<filter-mapping>
-		<filter-name>TokenFilter</filter-name>
+		<filter-name>tokenFilter</filter-name>
 		<url-pattern>/users/*</url-pattern>
 		<url-pattern>/groups/*</url-pattern>
 		<url-pattern>/friends/*</url-pattern>
@@ -61,11 +61,11 @@
 	</filter-mapping>
 
 	<filter>
-		<filter-name>ResponseFilter</filter-name>
+		<filter-name>responseFilter</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 	<filter-mapping>
-		<filter-name>ResponseFilter</filter-name>
+		<filter-name>responseFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 </web-app>
