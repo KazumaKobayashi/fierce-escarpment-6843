@@ -68,9 +68,7 @@ public class GroupController {
 			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		try{
-			Group group = groupService.update(groupId,groupname);
-			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
-			res.addObjects("group",group);
+			res = groupService.update(groupId,groupname);
 		
 		} catch(GroupNotFoundException e){
 			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
@@ -82,7 +80,6 @@ public class GroupController {
 	/**
 	 * グループの作成
 	 * 
-	 * @param groupId
 	 * @param groupname
 	 * @param request
 	 * @param response
@@ -95,9 +92,8 @@ public class GroupController {
    			HttpServletResponse response) throws IOException {
 		Response res = new Response();
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
-		Group group = groupService.create(token.getUserId(),groupname);
-		res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
-		res.addObjects("group", group);
+		
+		res = groupService.regist(token.getUserId(),groupname);
 		//レスポンスの設定
 		response.getWriter().print(res.getResponseJson());	
 	}

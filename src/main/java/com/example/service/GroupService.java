@@ -1,6 +1,7 @@
 package com.example.service;
 
 import com.example.exception.GroupNotFoundException;
+import com.example.jackson.Response;
 import com.example.model.Group;
 
 /**
@@ -27,7 +28,7 @@ public interface GroupService{
 	 * @return
 	 * @throws GroupNotFoundException 
 	 */
-	public Group update(Integer id,String name) throws GroupNotFoundException;
+	public Response update(Integer id,String name) throws GroupNotFoundException;
 	
 	/**
 	 * グループの情報を取得する
@@ -47,4 +48,11 @@ public interface GroupService{
 	 * @throws GroupNotFoundException
 	 */
 	public Group join(String userId, Integer id) throws GroupNotFoundException;
+	/**
+	 * 
+	 * @param userId
+	 * @param name
+	 * @return
+	 */
+	public Response regist(String userid,String name);
 }
