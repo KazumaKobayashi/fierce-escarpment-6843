@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
 				user.setEmail(email);
 			}
 		}
-		if (StringUtils.isNotBlank(username) && username.length() > User.USER_NAME_MAX_LENGTH) {
+		if (StringUtils.isNotBlank(username) && username.length() <= User.USER_NAME_MAX_LENGTH) {
 			user.setUsername(username);
 		} else {
 			// エラーメッセージの設定
