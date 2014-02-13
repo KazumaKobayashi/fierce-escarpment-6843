@@ -100,25 +100,16 @@ public class UserController {
 			@RequestParam("name") String username,
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
-		Response res = new Response();
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
-		try {
-			if (StringUtils.equals(token.getUserId(), userId)) {
-				User user = userService.update(userId, email, username);
-				res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
-				res.addObjects("user", user);
-			} else {
-				// ログイントークンが不正だった場合
-				response.sendError(HttpServletResponse.SC_NOT_FOUND);
-			}
-		} catch (UserNotFoundException e) {
-			res.setStatusCode(StatusCodeUtil.getStatusCode(e.getClass()));
-			res.addErrorMessage(e.toString());
+		if (StringUtils.equals(token.getUserId(), userId)) {
+			Response res = userService.update(userId, email, username);
+			// 返却する値
+			response.getWriter().print(res.getResponseJson());
+		} else {
+			// ログイントークンが不正だった場合
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
-
-		// 返却する値
-		response.getWriter().print(res.getResponseJson());
 	}
 
 	/**
@@ -141,18 +132,16 @@ public class UserController {
 			@RequestParam("new_password") String newPassword,
 			HttpServletRequest request,
 			HttpServletResponse response) throws IOException {
-		Response res = new Response();
 		LoginToken token = (LoginToken) request.getSession().getAttribute("token");
 
 		if (StringUtils.equals(token.getUserId(), userId)) {
-			userService.changePassword(userId, currentPassword, newPassword);
-			res.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
+			Response res = userService.changePassword(userId, currentPassword, newPassword);
+			// 返却する値
+			response.getWriter().print(res.getResponseJson());
 		} else {
 			// ログイントークンが不正だった場合
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		}
-		// 返却する値
-		response.getWriter().print(res.getResponseJson());
 	}
 
 	/**

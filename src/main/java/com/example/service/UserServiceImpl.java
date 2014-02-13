@@ -133,23 +133,45 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional
 	@Override
-	public User update(String userId, String email, String username) throws UserNotFoundException {
+	public Response update(String userId, String email, String username) {
+		Response response = new Response();
 		User user = em.find(User.class, userId);
 		if (user == null) {
-			throw new UserNotFoundException("User not found. Id: " + userId);
+			response.setStatusCode(StatusCodeUtil.getStatusCode(UserNotFoundException.class));
+			response.addErrorMessage("ユーザが存在しません。");
+			logger.error("User not found. Id: {}", userId);
+			return response;
 		}
 
-		Matcher matcher = EMAIL_PATTERN.matcher(email);
-		System.out.println(matcher.matches());
-		if (matcher.matches() && getUserByEmail(email) == null) {
-			// 不正でない　かつ　登録されているものでなければ
-			user.setEmail(email);
+		// メールアドレスのチェック
+		if (StringUtils.isBlank(email)) {
+			response.addErrorMessage("メールアドレスを入力してください。");
+			logger.warn("Invalid email. Id: {} emaail: {}", userId, email);
+		} else if (email.length() > User.EMAIL_MAX_LENGTH) {
+			response.addErrorMessage("メールアドレスが長過ぎます。");
+			logger.warn("Invalid email. Id: {} emaail: {}", userId, email);
+		} else {
+			Matcher matcher = EMAIL_PATTERN.matcher(email);
+			if (!matcher.matches()) {
+				response.addErrorMessage("不正なメールアドレスです。");
+				logger.warn("Invalid email. Id: {} emaail: {}", userId, email);
+			} else if (getUserByEmail(email) != null) {
+				response.addErrorMessage("そのメールアドレスはすでに使われています。");
+				logger.warn("Already use email. Id: {} emaail: {}", userId, email);
+			} else {
+				user.setEmail(email);
+			}
 		}
-		if (StringUtils.isNotBlank(username)) {
+		if (StringUtils.isNotBlank(username) && username.length() > User.USER_NAME_MAX_LENGTH) {
 			user.setUsername(username);
+		} else {
+			// エラーメッセージの設定
+			response.addErrorMessage(String.format("ユーザ名は、%d文字以内で入力してください。", User.USER_NAME_MAX_LENGTH));
+			logger.warn("Invalid username. string: {}", username);
 		}
 		em.persist(user);
-		return user;
+		response.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
+		return response;
 	}
 
 	@Transactional
@@ -184,10 +206,10 @@ public class UserServiceImpl implements UserService {
 			logger.error("Invalid password. Id: {}", userId);
 			return response;
 		}
-		response.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 		String password = PasswordUtil.getPasswordHash(userId, newPassword);
 		user.setPassword(password);
 		em.persist(user);
+		response.setStatusCode(StatusCodeUtil.getSuccessStatusCode());
 		return response;
 	}
 
