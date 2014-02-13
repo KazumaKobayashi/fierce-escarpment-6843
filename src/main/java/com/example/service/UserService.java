@@ -2,9 +2,7 @@ package com.example.service;
 
 import com.example.exception.EmailExistsException;
 import com.example.exception.InvalidEmailException;
-import com.example.exception.InvalidPasswordException;
 import com.example.exception.UserExistsException;
-import com.example.exception.UserNotFoundException;
 import com.example.jackson.Response;
 import com.example.model.User;
 
@@ -44,9 +42,8 @@ public interface UserService {
 	 * @param username
 	 * @param password
 	 * @return
-	 * @throws UserNotFoundException
 	 */
-	public User update(String userId, String email, String username) throws UserNotFoundException;
+	public Response update(String userId, String email, String username);
 
 	/**
 	 * ユーザを取得する
@@ -71,8 +68,7 @@ public interface UserService {
 	 * @param currentPassword
 	 * @param newPassword
 	 * @return
-	 * @throws UserNotFoundException
 	 */
-	public User changePassword(String userId, String currentPassword, String newPassword) throws UserNotFoundException, InvalidPasswordException;
+	public Response changePassword(String userId, String currentPassword, String newPassword);
 
 }
